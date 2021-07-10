@@ -1,0 +1,25 @@
+{
+  "name": "ccn-coverage-api",
+  "version": "1.0.0",
+  "description": "An API endpoint to receive CCN coverage data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Local-Connectivity-Lab/ccn-coverage-api.git"
+  },
+  "keywords": [
+    "api"
+  ],
+  "author": "Mark Theeranantachai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues"
+  },
+  "homepage": "https://github.com/Local-Connectivity-Lab/ccn-coverage-api#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
