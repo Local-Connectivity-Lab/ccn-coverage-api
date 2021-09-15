@@ -5,12 +5,12 @@ const router = express.Router()
 
 router.get('/api/data', async (req: Request, res: Response) => {
   const reqData:IQuery = req.body
-  console.log(req.body)
+  // console.log(req.body)
   let data
   if ('cell_id' in reqData) {
-    data = await Data.find({cell_id: reqData.cell_id})
+    data = await Data.find({cell_id: reqData.cell_id}).sort('-timestamp');
   } else {
-    data = await Data.find({})
+    data = await Data.find({}).sort('timestamp');
   }
   return res.status(200).send(data)
 })

@@ -110,7 +110,7 @@ dataSchema.statics.randomBuild = () => {
   return new Data({
     latitude: 47.45 + Math.random() * 0.3,
     longitude: -122.42 + Math.random() * 0.2,
-    timestamp: new Date(new Date(2021, 0, 1).getTime() + Math.random() * (new Date(2021, 5, 5).getTime())),
+    timestamp: (new Date(new Date(2021, 0, 1).getTime() + Math.random() * (new Date(2021, 6, 1).getTime() - new Date(2021, 0, 1).getTime()))).toISOString(),
     upload_speed: Math.random() * 10,
     download_speed: Math.random() * 10,
     data_since_last_report: Math.random() * 1000,
