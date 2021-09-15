@@ -2,7 +2,9 @@
 An API to receive POST data from Android phones and providing GET data for the measurement visualization.
 ## Usage
 ### POST `api/data`
-Sample POST request in JSON
+Upload a single data point
+
+Request in JSON
 ```
 {
   "latitude": 47.551642902162804,
@@ -16,7 +18,7 @@ Sample POST request in JSON
   "device_id": "00000000-910b-e6c1-0000-000046c1fa63"
 }
 ```
-Batch insert in JSON can be done with arrays
+Batch insert can be done with JSON arrays
 ```
 [
     {
@@ -55,26 +57,74 @@ Batch insert in JSON can be done with arrays
 ]
 ```
 ### GET `api/data`
-Sample GET request in JSON
+Filter the response by cell id
 ```
 {
-  "cell_id": "Filipino Community Center",
+  "cell_id": "Filipino Community Center"
 }
 ```
-Sample GET response in JSON (sorted by timestamp)
+Output will always be sorted by timestamp
 ```
 [
     {
-        "_id": "6141239777ee02a45ee04607",
-        "latitude": 47.551642902162804,
-        "longitude": -122.28339617848889,
-        "timestamp": "2021-03-08T12:55:26.350403+00:00",
-        "upload_speed": 980392.1568627451,
-        "download_speed": 4901960.784313725,
-        "data_since_last_report": 4732548294.36119,
-        "ping": 971.32,
+        "_id": "614157263c28e1a473ede843",
+        "latitude": 47.681932654395915,
+        "longitude": -122.31829217664796,
+        "timestamp": "2021-01-25T18:43:54.370Z",
+        "upload_speed": 7.289173724717997,
+        "download_speed": 5.234371563131994,
+        "data_since_last_report": 735.2343217314725,
+        "ping": 137.41470114174285,
         "cell_id": "Filipino Community Center",
-        "device_id": "00000000-910b-e6c1-0000-000046c1fa63"
+        "device_id": "1e683a49d71ffd0"
+    },
+    {
+        "_id": "614157263c28e1a473ede8ab",
+        "latitude": 47.609018101754664,
+        "longitude": -122.24328983549692,
+        "timestamp": "2021-01-30T11:53:27.886Z",
+        "upload_speed": 9.968546872273246,
+        "download_speed": 9.086963230811842,
+        "data_since_last_report": 129.52103778989633,
+        "ping": 93.1574318200596,
+        "cell_id": "Filipino Community Center",
+        "device_id": "6a1e5f76cb63ff1"
+    }
+]
+```
+Sample out
+```
+{
+    "timestamp_from": "2021-03-25T06:56:36.806Z",
+    "timestamp_to": "2021-03-30T03:05:12.867Z"
+}
+```
+Sample output
+```
+[
+    {
+        "_id": "614157263c28e1a473ede81b",
+        "latitude": 47.709047326517286,
+        "longitude": -122.36534582036059,
+        "timestamp": "2021-03-25T06:56:36.806Z",
+        "upload_speed": 5.753763485221568,
+        "download_speed": 1.1635339066855188,
+        "data_since_last_report": 869.5289269594277,
+        "ping": 3.4899287499857223,
+        "cell_id": "David-TCN",
+        "device_id": "fa3a6983c38747e"
+    },
+    {
+        "_id": "614157263c28e1a473ede8c1",
+        "latitude": 47.63027523397995,
+        "longitude": -122.26040422414964,
+        "timestamp": "2021-03-27T18:35:21.620Z",
+        "upload_speed": 6.0532965435700925,
+        "download_speed": 2.536257071269179,
+        "data_since_last_report": 502.1027748350426,
+        "ping": 145.3383285501783,
+        "cell_id": "SURGEtacoma",
+        "device_id": "078508cd3e87a25"
     }
 ]
 ```
