@@ -7,11 +7,21 @@ router.get('/api/data', async (req: Request, res: Response) => {
   const reqData:IQuery = req.body
   // console.log(req.body)
   let data
+  let findObj:any = {}
   if ('cell_id' in reqData) {
-    data = await Data.find({cell_id: reqData.cell_id}).sort('-timestamp');
-  } else {
-    data = await Data.find({}).sort('timestamp');
+    findObj['cell_id'] = reqData['cell_id']
   }
+  if ('timestamp_to' in reqData || 'timestamp_from' in reqData) {
+    findObj['timestamp'] = {}
+  }
+  if ('timestamp_to' in reqData) {
+    findObj['timestamp']['$lt'] = reqData['timestamp_to']
+  }
+  if ('timestamp_from' in reqData) {
+    findObj['timestamp']['$gte'] = reqData['timestamp_from']
+  }
+  console.log(reqData)
+  data = await Data.find(findObj).sort('timestamp');
   return res.status(200).send(data)
 })
 
@@ -22,14 +32,13 @@ router.get('/api/gen', async (req: Request, res: Response) => {
   // console.log(req.query)
   if ('num' in reqData && typeof reqData.num === 'string') {
     const reqNum: number = parseInt(reqData.num)
-    if (!isNaN(reqNum)) {
+    if (!isNaN(reqNum)) { 
       num = reqNum
     }
   }
   for (let i = 0; i < num; i++) {
     let idLess:any = JSON.parse(JSON.stringify(Data.randomBuild()))
     delete idLess['_id']
-    console.log(idLess)
     data.push(idLess);
   }
   return res.status(200).send(data)
