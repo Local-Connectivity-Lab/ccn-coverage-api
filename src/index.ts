@@ -3,15 +3,20 @@ import mongoose from 'mongoose'
 import { json } from 'body-parser'
 import { dataRouter } from './routes/data'
 
+// Change this line to match your mongodb server
+const mongodbURI = 'mongodb://192.168.249.129:27017/data'
+const listeningPort = 3000
+
 const app = express()
 app.use(json())
 app.use(dataRouter)
 
-mongoose.connect('mongodb://192.168.249.129:27017/todo',
+
+mongoose.connect(mongodbURI,
 () => {
   console.log('connected to database')
 })
 
-app.listen(3000, () => {
-  console.log('server is listening on port 3000')
+app.listen(listeningPort, () => {
+  console.log('server is listening on port ' + listeningPort)
 })

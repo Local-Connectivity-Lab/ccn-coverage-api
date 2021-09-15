@@ -1,4 +1,13 @@
 import mongoose from 'mongoose';
+import sites from './sites.json';
+
+interface ISite {
+  name: string
+  latitude: number
+  longitude: number
+  status: string
+  address: string
+}
 
 interface IData {
   latitude: number
@@ -32,7 +41,8 @@ interface IQuery {
 }
 
 interface DataModelInterface extends mongoose.Model<DataDoc> {
-  build(attr: IData): any
+  build(attr: IData): DataDoc
+  randomBuild(): DataDoc
 }
 
 interface DataDoc extends mongoose.Document {
@@ -94,12 +104,28 @@ dataSchema.statics.build = (attr: IData) => {
   return new Data(attr);
 }
 
+dataSchema.statics.randomBuild = () => {
+  const randSiteId = Math.floor(Math.random() * sites.length)
+  const androidID = [...Array(15)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+  return new Data({
+    latitude: 47.45 + Math.random() * 0.3,
+    longitude: -122.42 + Math.random() * 0.2,
+    timestamp: new Date(new Date(2021, 0, 1).getTime() + Math.random() * (new Date(2021, 5, 5).getTime())),
+    upload_speed: Math.random() * 10,
+    download_speed: Math.random() * 10,
+    data_since_last_report: Math.random() * 1000,
+    ping: Math.random() * 160,
+    cell_id: sites[randSiteId].name,
+    device_id: androidID
+  });
+}
+
 const Data = mongoose.model<DataDoc, DataModelInterface>('Data', dataSchema)
 
 export { Data, IData , IQuery }
 
 /*
-Sample Data
+Sample IData
 {
   "latitude": 47.551642902162804,
   "longitude": -122.28339617848889,
@@ -110,5 +136,22 @@ Sample Data
   "ping": 971.32,
   "cell_id": "Filipino Community Center",
   "device_id": "00000000-910b-e6c1-0000-000046c1fa63"
+}
+*/
+
+/*
+Sample IRequest
+{
+  "lat_min": 47.551642902162804,
+  "lat_max": 48.28339617848889,
+  "lng_min": -10.551642902162804,
+  "lng_max": -6.28339617848889,
+  "timestamp_min": "2021-03-08T12:55:26.350403+00:00",
+  "timestamp_max": "2021-04-08T12:55:26.350403+00:00",
+  "upload_speed_min": 980392.1568627451,
+  "download_speed_min": 4901960.784313725,
+  "data_since_last_report_max": 4732548294.36119,
+  "ping_max": 971.32,
+  "cell_id": "Filipino Community Center",
 }
 */
