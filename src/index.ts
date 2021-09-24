@@ -4,7 +4,7 @@ import { json } from 'body-parser'
 import { dataRouter } from './routes/data'
 
 // Change this line to match your mongodb server
-const mongodbURI = 'mongodb://192.168.249.129:27017/data'
+const mongodbURI = 'mongodb://localhost:27017/data'
 const listeningPort = 3000
 
 const app = express()

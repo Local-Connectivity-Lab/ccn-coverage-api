@@ -40,6 +40,19 @@ interface IQuery {
   device_id?: string
 }
 
+interface IAggregate {
+  left: number
+  top: number
+  width: number
+  height: number
+  selected_sites: string
+  map_type: string
+}
+
+function isIAggregate(x: any): x is IAggregate {
+  return 'left' in x && 'top' in x && 'width' in x && 'height' in x && 'selected_sites' in x && 'map_type' in x
+}
+
 interface DataModelInterface extends mongoose.Model<DataDoc> {
   build(attr: IData): DataDoc
   randomBuild(): DataDoc
@@ -122,7 +135,7 @@ dataSchema.statics.randomBuild = () => {
 
 const Data = mongoose.model<DataDoc, DataModelInterface>('Data', dataSchema)
 
-export { Data, IData , IQuery }
+export { Data, IData , IQuery, IAggregate, isIAggregate }
 
 /*
 Sample IData
