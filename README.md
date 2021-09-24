@@ -192,8 +192,8 @@ Outputs of `/api/gen?num=5`
 ]
 ```
 ## TODO
-- Add more filtering to the data (upload_speed_min/max, timestamp_from/to, etc)
+- Add more filtering to the data (upload_speed_min/max, latitude min/max, etc)
 - Verify the timestamp format and other data sanitization
 ## Planned Features
-- Filter the database based on radius of a sample point
+- Filter the database based on what we need in the final visualization (e.g. get average data on a smaller square)
 
