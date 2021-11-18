@@ -6,6 +6,7 @@ const axios = require('axios').default;
 // import axios from 'axios'
 
 import { Data, IData, IQuery, IAggregate, isIAggregate } from '../../models/data'
+import { User, IUser } from '../../models/users'
 
 const EPC_API_ENDPOINT = 'http://localhost:3001/api/'
 
@@ -102,7 +103,8 @@ router.get('/api/gen', async (req: Request, res: Response) => {
   return res.status(200).send(data)
 })
  
-router.post('/api/data', async (req: Request, res: Response) => {
+// TODO: Check if the user is actually online
+router.post('/api/upload', async (req: Request, res: Response) => {
   if (!Array.isArray(req.body)) {
       const reqData:IData = req.body
       const data = Data.build(reqData)
@@ -151,8 +153,18 @@ router.post('/api/register', async (req: Request, res: Response) => {
       'public_key': key.exportKey('pkcs1-public-pem')
     }
   )
-
-  res.send(response.data);
+  if (response.data['success'] == true) {
+    const userData = User.build({
+      identity: identity.toString('hex'),
+      public_key: key.exportKey('pkcs1-public-pem'),
+      last_online: new Date().toISOString()
+    })
+    // console.log(userData)
+    await userData.save()
+    res.status(201).send(response.data)
+  } else {
+    res.status(200).send(response.data)
+  }
 })
 
 
