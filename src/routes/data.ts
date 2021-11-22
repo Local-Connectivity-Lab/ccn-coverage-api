@@ -1,19 +1,6 @@
 import express, {Request, Response} from 'express'
-// import { JSDOM } from 'jsdom'
-// import * as L from 'leaflet'
-import NodeRSA from 'node-rsa'
-const axios = require('axios').default;
-// import axios from 'axios'
 
 import { Data, IData, IQuery, IAggregate, isIAggregate } from '../../models/data'
-import { User, IUser } from '../../models/users'
-
-const EPC_API_ENDPOINT = 'http://localhost:3001/api/'
-
-const instance = axios.create({
-  baseURL: EPC_API_ENDPOINT,
-  timeout: 1000,
-});
 
 // const dom = new JSDOM('')
 // global.window = dom.window as any
@@ -120,52 +107,5 @@ router.post('/api/upload', async (req: Request, res: Response) => {
     return res.status(201).send("Successful")
   }
 })
-
-// TODO: Work with hardware backed attestation
-router.post('/api/register', async (req: Request, res: Response) => {
-  const buffer:Buffer = req.body
-  var public_key:Buffer = buffer.slice(0, 270)
-  var identity:Buffer = buffer.slice(270, 270 + 32)
-  var attestation = buffer.slice(270 + 32, 270 + 32 + 256)
-  // Check if the signature exists
-  if (!('signature' in req.headers) || typeof req.headers['signature'] != 'string') {
-    throw new Error('...')
-  }
-  var signature = req.headers['signature']
-  // console.log(public_key.toString('base64'))
-  // console.log(identity.toString('base64'))
-  // console.log(attestation.toString('base64'))
-  // console.log(signature)
-
-  // Verify the signature
-  var key = new NodeRSA()
-  key.importKey(public_key, 'pkcs1-public-der')
-  if (!key.verify(buffer, signature, 'buffer', 'base64')) {
-    res.send('Invalid signature')
-    return;
-  }
-
-  // Asking EPC's database to register a new user
-  
-  const response = await instance.post('register', 
-    {
-      'identity': identity.toString('hex'),
-      'public_key': key.exportKey('pkcs1-public-pem')
-    }
-  )
-  if (response.data['success'] == true) {
-    const userData = User.build({
-      identity: identity.toString('hex'),
-      public_key: key.exportKey('pkcs1-public-pem'),
-      last_online: new Date().toISOString()
-    })
-    // console.log(userData)
-    await userData.save()
-    res.status(201).send(response.data)
-  } else {
-    res.status(200).send(response.data)
-  }
-})
-
 
 export { router as dataRouter }

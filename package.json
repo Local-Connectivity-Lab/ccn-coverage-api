@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/body-parser": "^1.19.2",
+    "@types/node": "^16.11.9",
     "@types/node-rsa": "^1.1.1",
     "axios": "^0.24.0",
     "body-parser": "^1.19.0",
