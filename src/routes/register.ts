@@ -1,5 +1,5 @@
 import express, {Request, Response} from 'express'
-import * as crypto from "crypto"
+import * as Crypto from "crypto"
 const axios = require('axios').default
 
 import { User, IUser } from '../../models/users'
@@ -7,6 +7,7 @@ import { IRegisterRequest, AuthenticationMessage } from '../../models/register'
 
 const EPC_API_ENDPOINT = 'http://localhost:3001/api/'
 
+// Create axios instance for registering the user to the EPC
 const instance = axios.create({
   baseURL: EPC_API_ENDPOINT,
   timeout: 1000,
@@ -20,17 +21,22 @@ router.post('/api/register', async (req: Request, res: Response) => {
   const reqBody:IRegisterRequest = req.body
   const publicKey = reqBody.publicKey
   const message = reqBody.message
-  const sigMessage = reqBody.sigMessage
+  const sigMessage:string = reqBody.sigMessage
+
   // Serialize data from the authentication message.
   const authMessage = new AuthenticationMessage(message)
   const identity = authMessage.identity
   const attestation = authMessage.attestation
 
   // Verify the signature
-  const keyObject = crypto.KeyObject.from(publicKey)
-  const verified = crypto.verify('der', message, keyObject, sigMessage)
+  const messageBuffer = new Uint8Array(message);
+  const sigBuffer = Buffer.from(sigMessage, 'hex');
+  const keyObject = Crypto.createPublicKey(publicKey)
+
+  const verified = Crypto.verify(null, messageBuffer, keyObject, sigBuffer)
   if (!verified) {
     res.status(401).send('Signature Invalid')
+    return;
   }
 
   // Asking EPC's database to register a new user
@@ -41,6 +47,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
     }
   )
 
+  // Register to the database if successful
   if (response.data['success'] == true) {
     const userData = User.build({
       identity: identity,

@@ -9,7 +9,8 @@ import { Data, IData, IQuery, IAggregate, isIAggregate } from '../../models/data
 
 const router = express.Router()
 
-router.get('/api/data', async (req: Request, res: Response) => {
+// Query any data
+router.get('/dev/data', async (req: Request, res: Response) => {
   const reqData:IQuery = req.body
   // console.log(req.body)
   let data
@@ -31,7 +32,7 @@ router.get('/api/data', async (req: Request, res: Response) => {
   return res.status(200).send(data)
 })
 
-
+// TODO: Aggregate data to be used in the front end
 router.get('/api/agg', async (req: Request, res: Response) => {
   if (!isIAggregate(req.query)) {
     throw new Error('...')
@@ -71,7 +72,8 @@ router.get('/api/agg', async (req: Request, res: Response) => {
   // return res.status(200).send(data)
 })
 
-router.get('/api/gen', async (req: Request, res: Response) => {
+// Generate mock-up data
+router.get('/dev/gen', async (req: Request, res: Response) => {
   const reqData:{ num?: string} = req.query
   let num: number = 100
   let data: IData[] = new Array()
@@ -90,7 +92,7 @@ router.get('/api/gen', async (req: Request, res: Response) => {
   return res.status(200).send(data)
 })
  
-// TODO: Check if the user is actually online
+// TODO: Check if the user is actually online (calling EPCs is_online/status)
 router.post('/api/upload', async (req: Request, res: Response) => {
   if (!Array.isArray(req.body)) {
       const reqData:IData = req.body
