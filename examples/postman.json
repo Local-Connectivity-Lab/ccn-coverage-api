@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "5713dcaf-5ce0-4c32-a2d2-c3d7146b07f8",
+		"name": "EPC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[Dev] Add legacy entries",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"iccid\": \"123465748395736\",\r\n        \"phone_number\": \"+12068373837\"\r\n    },\r\n    {\r\n        \"iccid\": \"123465748344736\",\r\n        \"phone_number\": \"+12068374857\"\r\n    },\r\n    {\r\n        \"iccid\": \"123425748325736\",\r\n        \"phone_number\": \"+12012374837\"\r\n    },\r\n    {\r\n        \"iccid\": \"313465748324736\",\r\n        \"phone_number\": \"+13012375837\"\r\n    },\r\n    {\r\n        \"iccid\": \"654620000003746\",\r\n        \"phone_number\": \"+12062039584\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/dev/add-legacy-entries",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dev",
+						"add-legacy-entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Dev] Generate ED25519 keypair",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/dev/gen-keypair",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"gen-keypair"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Dev] Generate ED25519 keypair Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/dev/gen-keypair",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"gen-keypair"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Dev] Sign",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"payload\": [123, 34, 112, 117, 98, 108, 105, 99, 75, 101, 121, 34, 58, 34, 45, 45, 45, 45, 45, 66, 69, 71, 73, 78, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 77, 67, 111, 119, 66, 81, 89, 68, 75, 50, 86, 119, 65, 121, 69, 65, 66, 121, 106, 114, 52, 102, 53, 107, 43, 89, 100, 102, 90, 52, 109, 90, 115, 85, 47, 102, 79, 65, 113, 87, 74, 69, 49, 99, 75, 104, 73, 122, 102, 104, 111, 107, 116, 105, 75, 56, 122, 65, 89, 61, 92, 92, 110, 45, 45, 45, 45, 45, 69, 78, 68, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 34, 44, 34, 105, 100, 101, 110, 116, 105, 116, 121, 34, 58, 34, 56, 100, 53, 52, 49, 51, 98, 56, 100, 49, 100, 55, 101, 52, 102, 101, 99, 55, 55, 50, 98, 50, 50, 57, 98, 99, 51, 54, 101, 52, 53, 100, 48, 56, 52, 53, 57, 56, 98, 99, 99, 97, 54, 56, 57, 100, 54, 102, 48, 98, 52, 102, 49, 49, 56, 55, 55, 99, 50, 53, 48, 50, 50, 48, 34, 44, 34, 97, 116, 116, 101, 115, 116, 97, 116, 105, 111, 110, 34, 58, 34, 68, 69, 65, 68, 66, 69, 69, 70, 34, 125],\r\n    \"privateKey\": \"-----BEGIN PRIVATE KEY-----\\nMC4CAQAwBQYDK2VwBCIEINhGz4ioLq5EvviHG6mf8k+VNZz8tPu11+dTpquXvdXX\\n-----END PRIVATE KEY-----\\n\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/dev/sign",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"sign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Dev] Verify",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"payload\": [123, 34, 112, 117, 98, 108, 105, 99, 75, 101, 121, 34, 58, 34, 45, 45, 45, 45, 45, 66, 69, 71, 73, 78, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 77, 67, 111, 119, 66, 81, 89, 68, 75, 50, 86, 119, 65, 121, 69, 65, 66, 121, 106, 114, 52, 102, 53, 107, 43, 89, 100, 102, 90, 52, 109, 90, 115, 85, 47, 102, 79, 65, 113, 87, 74, 69, 49, 99, 75, 104, 73, 122, 102, 104, 111, 107, 116, 105, 75, 56, 122, 65, 89, 61, 92, 92, 110, 45, 45, 45, 45, 45, 69, 78, 68, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 34, 44, 34, 105, 100, 101, 110, 116, 105, 116, 121, 34, 58, 34, 56, 100, 53, 52, 49, 51, 98, 56, 100, 49, 100, 55, 101, 52, 102, 101, 99, 55, 55, 50, 98, 50, 50, 57, 98, 99, 51, 54, 101, 52, 53, 100, 48, 56, 52, 53, 57, 56, 98, 99, 99, 97, 54, 56, 57, 100, 54, 102, 48, 98, 52, 102, 49, 49, 56, 55, 55, 99, 50, 53, 48, 50, 50, 48, 34, 44, 34, 97, 116, 116, 101, 115, 116, 97, 116, 105, 111, 110, 34, 58, 34, 68, 69, 65, 68, 66, 69, 69, 70, 34, 125],\r\n    \"publicKey\": \"-----BEGIN PUBLIC KEY-----\\nMCowBQYDK2VwAyEALWiFn5M2gAeHJ6XDy6jh+gt9uKGpSeykjcaryrM00jM=\\n-----END PUBLIC KEY-----\\n\",\r\n    \"sigMessage\": \"70fc77f1a415be7e6475b0137b55db5c7612d033fa9d8086d73ac247bf0427dc53a97c733f16fcc7cbb75ce8823742482e86aa294072843a48e37894a6960c02\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/dev/verify",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Dev] Get Identity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"iccid\": \"654620000003746\",\r\n    \"phoneNumber\": \"+12062039584\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/dev/get_identity",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"get_identity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/dev/list-users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"dev",
+						"list-users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "signature",
+						"value": "p++XZOff8MEYpbqqfer6RGMrkROm6Sa1UYuJLRiH4KNXtzxFXcp+vHF3IOkG4CtYMI+R8soYyzK4SQGmYWtCc7b2XeeSsJxQhGbXN6dlKJHpfUZ1FNViwBicyKCYkaYsgSLGUnHfo8/2LPsDUBszY9+RSzFxtEV96tfxJ1jFiJnaM48zpQtH6AlwcZ0eYFp12/tDZ/hUPcEUuuFDCOJH744RjiTPeOqgZ8RMHibbjhAQTVsv7mHD+cDckRORmXpcGB4nXbzy/zLzN6uOHRd2ql0ARfodslKmAG4qXbIjp5kc2oqWuF2eoKKOhgrwDfbMSJSMi3GQdNgsAleQjOMeoA==",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"publicKey\": \"-----BEGIN PUBLIC KEY-----\\nMCowBQYDK2VwAyEALWiFn5M2gAeHJ6XDy6jh+gt9uKGpSeykjcaryrM00jM=\\n-----END PUBLIC KEY-----\\n\",\r\n    \"message\": [123, 34, 112, 117, 98, 108, 105, 99, 75, 101, 121, 34, 58, 34, 45, 45, 45, 45, 45, 66, 69, 71, 73, 78, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 77, 67, 111, 119, 66, 81, 89, 68, 75, 50, 86, 119, 65, 121, 69, 65, 66, 121, 106, 114, 52, 102, 53, 107, 43, 89, 100, 102, 90, 52, 109, 90, 115, 85, 47, 102, 79, 65, 113, 87, 74, 69, 49, 99, 75, 104, 73, 122, 102, 104, 111, 107, 116, 105, 75, 56, 122, 65, 89, 61, 92, 92, 110, 45, 45, 45, 45, 45, 69, 78, 68, 32, 80, 85, 66, 76, 73, 67, 32, 75, 69, 89, 45, 45, 45, 45, 45, 92, 92, 110, 34, 44, 34, 105, 100, 101, 110, 116, 105, 116, 121, 34, 58, 34, 56, 100, 53, 52, 49, 51, 98, 56, 100, 49, 100, 55, 101, 52, 102, 101, 99, 55, 55, 50, 98, 50, 50, 57, 98, 99, 51, 54, 101, 52, 53, 100, 48, 56, 52, 53, 57, 56, 98, 99, 99, 97, 54, 56, 57, 100, 54, 102, 48, 98, 52, 102, 49, 49, 56, 55, 55, 99, 50, 53, 48, 50, 50, 48, 34, 44, 34, 97, 116, 116, 101, 115, 116, 97, 116, 105, 111, 110, 34, 58, 34, 68, 69, 65, 68, 66, 69, 69, 70, 34, 125],\r\n    \"sigMessage\": \"70fc77f1a415be7e6475b0137b55db5c7612d033fa9d8086d73ac247bf0427dc53a97c733f16fcc7cbb75ce8823742482e86aa294072843a48e37894a6960c02\",\r\n    \"attestation\": \"DEADBEEF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
