@@ -1,6 +1,37 @@
 # ccn-coverage-api
 An API to receive POST data from Android phones and providing GET data for the measurement visualization.
 ## Usage
+### POST `api/register`
+Verify and register the user to the server and distribute to the EPCs
+```
+{
+  "publicKey": string,  // ed25519, pem, pkcs8
+  "message": Buffer,    // binary array of registration message
+  "sigMessage": string, // signature of "message", hex
+  "attestation": string // hardware-backed attestation generated from Android (TODO)
+}
+```
+The registration message contains a byte arrays that can be serialized to:
+```
+{
+  publicKey: string   // ed25519, pem, pkcs8
+  identity: string    // hex
+  attestation: string
+}
+```
+Where identity is a hash of a concatenation of ICCID and phone number in SHA256
+
+### POST `api/upload`
+Verify that the user is connected to an EPC and upload measuremenet to the server
+
+## For the /data endpoint, the api will be POST and accept:
+The body R contains:
+- Measurement R (in json, etc.)
+
+The header contains:
+- Hash of Public Key P_K. SHA 256 bits. Send it with 'identity' as a header key
+- Signature Sigma_R (Again, just sign R with the secret), Send it with 'signature' as a header key. 2048 bits
+
 ### POST `api/data`
 Upload a single data point
 
