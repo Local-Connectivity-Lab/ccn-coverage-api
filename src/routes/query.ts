@@ -37,9 +37,13 @@ const sites: Site[] = JSON.parse(
 );
 
 const cellIdDict: { [name: string]: string[] } = {}
+const siteNameDict: { [name: string]: string } = {}
 for (let site of sites) {
   if (site.cell_id != undefined) {
-    cellIdDict[site.name] = site.cell_id
+    cellIdDict[site.name] = site.cell_id;
+    for (let cellId of site.cell_id) {
+      siteNameDict[cellId] = site.name;
+    }
   }
 }
 
@@ -64,27 +68,9 @@ router.get('/api/data', async (req, res) => {
     const zoom = Number.parseInt(req.query.zoom + '');
     const selectedSites = req.query.selectedSites + '';
     const mapType = req.query.mapType + '';
-    const timeFrom = req.query.from;
-    const timeTo = req.query.to;
-    let cellList: string[] = []
-    for (let site of selectedSites.split(',')) {
-      if (cellIdDict[site] != undefined) {
-        cellList = cellList.concat(cellIdDict[site]);
-      }
-    }
-    const findObj:any = {}
-    findObj['cell_id'] = {
-      $in: cellList
-    }
-    if (timeFrom != undefined || timeTo != undefined) {
-      findObj['timestamp'] = {}
-    }
-    if (timeTo != undefined) {
-      findObj['timestamp']['$lt'] = timeTo
-    }
-    if (timeFrom != undefined) {
-      findObj['timestamp']['$gte'] = timeFrom
-    }
+    const timeFrom = req.query.from + '';
+    const timeTo = req.query.to + '';
+    const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     const bins = new Array<number[]>(
       (width * height) >> (2 * binSizeShift),
     );
@@ -98,35 +84,28 @@ router.get('/api/data', async (req, res) => {
       console.error('Invalid mapType: ' + mapType);
       return;
     }
-    if (cellList.length == 0) {
-      res.status(400).send('Invalid sites');
-      console.error('Invalid sites');
-      return;
-    }
-    // console.log(findObj)
     let data;
-    if (isMeasurementType(mapType)) {
-      data = await MeasurementData.find(findObj).sort('timestamp');
-      data.forEach(d => {
-        const { x, y } = map.project([d.latitude, d.longitude], zoom);
-        const value: number = d[mapType];
-        const index =
-          ((x - left) >> binSizeShift) * height + ((y - top) >> binSizeShift);
-        (bins[index] = bins[index] ?? []).push(value);
-      });
-    } else {
-      data = await SignalData.find(findObj).sort('timestamp');
-      data.forEach(d => {
-        const { x, y } = map.project([d.latitude, d.longitude], zoom);
-        const value: number = d['dbm'];
-        const index =
-          ((x - left) >> binSizeShift) * height + ((y - top) >> binSizeShift);
-        (bins[index] = bins[index] ?? []).push(value);
-      });
-    }
-    if (data == undefined) {
-      res.status(500).send('database error');
-      return;
+    // Still return nulls if selected sites are invalid
+    if (findObj['cell_id'] != undefined) {
+      if (isMeasurementType(mapType)) {
+        data = await MeasurementData.find(findObj).sort('timestamp');
+        data.forEach(d => {
+          const { x, y } = map.project([d.latitude, d.longitude], zoom);
+          const value: number = d[mapType];
+          const index =
+            ((x - left) >> binSizeShift) * height + ((y - top) >> binSizeShift);
+          (bins[index] = bins[index] ?? []).push(value);
+        });
+      } else {
+        data = await SignalData.find(findObj).sort('timestamp');
+        data.forEach(d => {
+          const { x, y } = map.project([d.latitude, d.longitude], zoom);
+          const value: number = d['dbm'];
+          const index =
+            ((x - left) >> binSizeShift) * height + ((y - top) >> binSizeShift);
+          (bins[index] = bins[index] ?? []).push(value);
+        });
+      }
     }
     let result = [];
     for (let bin of bins) {
@@ -142,5 +121,153 @@ router.get('/api/data', async (req, res) => {
     res.status(400).send(error);
   }
 });
+
+router.get('/sitesSummary', async (req, res) => {
+  try {
+    const timeFrom = req.query.from + '';
+    const timeTo = req.query.to + '';
+    let output:any = {};
+    let measurementNum:any = {};
+    let signalNum:any = {};
+    let findObj:any = getFindObj(timeFrom, timeTo, '');
+    console.log(findObj);
+    const measurement = await MeasurementData.find(findObj).sort('timestamp');
+    const signal = await SignalData.find(findObj).sort('timestamp');
+    for (let site of sites) {
+      output[site.name] = {
+        ping: 0,
+        download_speed: 0,
+        upload_speed: 0,
+        dbm: 0
+      }
+      measurementNum[site.name] = 0;
+      signalNum[site.name] = 0;
+    }
+    for (let m of measurement) {
+      let siteName = siteNameDict[m.cell_id];
+      if (siteName != undefined) {
+        output[siteName].ping += m.ping;
+        output[siteName].download_speed += m.download_speed;
+        output[siteName].upload_speed += m.upload_speed;
+        measurementNum[siteName] += 1;
+      }
+    }
+    for (let s of signal) {
+      let siteName = siteNameDict[s.cell_id];
+      if (siteName != undefined) {
+        output[siteName].dbm += s.dbm;
+        signalNum[siteName] += 1;
+      }
+    }
+    for (let site of sites) {
+      if (measurementNum[site.name] > 0) {
+        output[site.name].ping /= measurementNum[site.name];
+        output[site.name].download_speed /= measurementNum[site.name];
+        output[site.name].upload_speed /= measurementNum[site.name];
+      }
+      if (signalNum[site.name] > 0) {
+        output[site.name].dbm /= signalNum[site.name];
+      }
+    }
+    res.send(output);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error);
+  }
+});
+
+router.get('/lineSummary', async (req, res) => {
+  try {
+    const mapType = req.query.mapType + '';
+    const selectedSites = req.query.selectedSites + ''
+    const timeFrom = req.query.from + '';
+    const timeTo = req.query.to + '';
+    const findObj = getFindObj(timeFrom, timeTo, selectedSites);
+    // Send nothing if no sites
+    if (findObj['cell_id'] == undefined) {
+      res.status(200).send();
+      return;
+    }
+
+    if (!isMapType(mapType)) {
+      res.status(400).send('Invalid mapType: ' + mapType);
+      console.error('Invalid mapType: ' + mapType);
+      return;
+    }
+    let data;
+    let output:any = {};
+    let agg:any = {};
+    if (isMeasurementType(mapType)) {
+      data = await MeasurementData.find(findObj).sort('timestamp');
+      for (let m of data) {
+        const siteName = siteNameDict[m.cell_id];
+        if (siteName == undefined) {
+          continue;
+        }
+        const time = new Date(m.timestamp.toString().substring(0, 10)).toISOString();
+        agg[siteName] = agg[siteName] ?? {};
+        agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
+        agg[siteName][time].sum += m[mapType];
+        agg[siteName][time].count += 1;
+      }
+    } else {
+      data = await SignalData.find(findObj).sort('timestamp');
+      for (let s of data) {
+        const siteName = siteNameDict[s.cell_id];
+        if (siteName == undefined) {
+          continue;
+        }
+        const time = new Date(s.timestamp.toString().substring(0, 10)).toISOString();
+        agg[siteName] = agg[siteName] ?? {};
+        agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
+        agg[siteName][time].sum += s.dbm;
+        agg[siteName][time].count += 1;
+      }
+    }
+    const aggData = agg as { [site: string]: { [timestamp: string]: { sum: number; count: number } } };
+
+    const avgData = Object.entries(aggData).map(([k, v]) => ({
+      site: k,
+      values: Object.entries(v).map(([date, { sum, count }]) => ({
+        date,
+        value: sum / count,
+      })),
+    }));
+
+    avgData.forEach(a => a.values.sort((a, b) => (a.date < b.date ? -1 : 1)));
+
+    res.send(avgData);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error);
+  }
+});
+
+function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string) {
+  const findObj:any = {}
+  let cellList: string[] = []
+  if (selectedSites != undefined && selectedSites != 'undefined') {
+    for (let site of selectedSites.split(',')) {
+      if (cellIdDict[site] != undefined) {
+        cellList = cellList.concat(cellIdDict[site]);
+      }
+    }
+    if (cellList.length > 0) {
+      findObj['cell_id'] = {
+        $in: cellList
+      }
+    }
+  }
+  if (timeFrom != 'undefined' || timeTo != 'undefined') {
+    findObj['timestamp'] = {};
+  }
+  if (timeTo != 'undefined') {
+    findObj['timestamp']['$lt'] = timeTo;
+  }
+  if (timeFrom != 'undefined') {
+    findObj['timestamp']['$gte'] = timeFrom;
+  }
+  return findObj;
+}
 
 export { router as queryRouter }
