@@ -186,7 +186,7 @@ router.get('/api/lineSummary', async (req, res) => {
     // Send nothing if no sites
     let agg:any = {};
     if (findObj['cell_id'] == undefined) {
-      res.status(200).send(agg);
+      res.status(200).send([]);
       return;
     }
 
