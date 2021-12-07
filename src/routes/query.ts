@@ -184,8 +184,9 @@ router.get('/api/lineSummary', async (req, res) => {
     const timeTo = req.query.to + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     // Send nothing if no sites
+    let agg:any = {};
     if (findObj['cell_id'] == undefined) {
-      res.status(200).send();
+      res.status(200).send(agg);
       return;
     }
 
@@ -195,8 +196,6 @@ router.get('/api/lineSummary', async (req, res) => {
       return;
     }
     let data;
-    let output:any = {};
-    let agg:any = {};
     if (isMeasurementType(mapType)) {
       data = await MeasurementData.find(findObj).sort('timestamp');
       for (let m of data) {
