@@ -40,7 +40,6 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
         return res.status(201).send(data)
     } else {
       const reqData:ISignal[] = req.body
-      console.log(req.body)
       for (let i = 0; i < reqData.length; i++) {
         const data = SignalData.build(reqData[i])
         await data.save()
@@ -48,8 +47,8 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
       return res.status(201).send("Successful")
     }
   } catch(error) {
-    return res.status(500).send("Unknown Error")
+    return res.status(500).send("Database Error")
   }
 })
 
-export { router as dataRouter }
+export { router as uploadRouter }

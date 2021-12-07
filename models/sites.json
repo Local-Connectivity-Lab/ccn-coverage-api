@@ -46,7 +46,10 @@
     "latitude": 47.60533,
     "longitude": -122.3018,
     "status": "in-conversation",
-    "address": "400 23rd Ave, Seattle, WA 98122"
+    "address": "400 23rd Ave, Seattle, WA 98122",
+    "cell_id": [
+      "67942220"
+    ]
   },
   {
     "name": "Skyway Library",

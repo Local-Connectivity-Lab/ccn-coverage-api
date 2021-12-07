@@ -1,8 +1,10 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import * as d3 from "d3";
 import { json, urlencoded, raw } from 'body-parser'
-import { dataRouter } from './routes/upload'
+import { uploadRouter } from './routes/upload'
 import { registerRouter } from './routes/register'
+import { queryRouter } from './routes/query'
 
 // Change this line to match your mongodb server
 const mongodbURI = 'mongodb://192.168.249.129:27017/api-data'
@@ -23,8 +25,9 @@ app.use((_, res, next) => {
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(raw({type: 'application/octet-stream', limit : '2mb'}))
-app.use(dataRouter)
 app.use(registerRouter)
+app.use(uploadRouter)
+app.use(queryRouter)
 
 
 mongoose.connect(mongodbURI,

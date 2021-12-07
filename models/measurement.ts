@@ -67,7 +67,7 @@ measurementSchema.statics.randomBuild = () => {
 
 const MeasurementData = mongoose.model<MeasurementDoc, MeasurementModelInterface>('Measurement', measurementSchema)
 
-export { MeasurementData, IMeasurement }
+export { MeasurementData, IMeasurement, MeasurementDoc }
 
 /*
 {

@@ -5,7 +5,7 @@ interface ISignal {
   latitude: string
   longitude: string
   timestamp: string
-  dBm: number
+  dbm: number
   level_code: number
   cell_id: number
   device_id: string
@@ -19,7 +19,7 @@ interface SignalDoc extends mongoose.Document {
   latitude: number
   longitude: number
   timestamp: string
-  dBm: number
+  dbm: number
   level_code: number
   cell_id: string
   device_id: string
@@ -29,7 +29,7 @@ const signalSchema = new mongoose.Schema({
   latitude:   { type: Number, required: true },
   longitude:  { type: Number, required: true },
   timestamp:  { type: Date,   required: true },
-  dBm:        { type: Number, required: true },
+  dbm:        { type: Number, required: true },
   level_code: { type: Number, required: true },
   cell_id:    { type: String, required: true },
   device_id:  { type: String, required: true },
@@ -44,4 +44,4 @@ signalSchema.statics.build = (attr: ISignal) => {
 
 const SignalData = mongoose.model<SignalDoc, SignalModelInterface>('Signal', signalSchema)
 
-export { SignalData, ISignal }
+export { SignalData, ISignal, SignalDoc }
