@@ -1,13 +1,12 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import * as d3 from "d3";
 import { json, urlencoded, raw } from 'body-parser'
 import { uploadRouter } from './routes/upload'
 import { registerRouter } from './routes/register'
 import { queryRouter } from './routes/query'
 
 // Change this line to match your mongodb server
-const mongodbURI = 'mongodb://192.168.249.129:27017/api-data'
+const mongodbURI = 'mongodb://localhost:27017/api-data'
 // const mongodbURI = 'mongodb://localhost:27017/api-data'
 // const mongodbURI = 'mongodb://192.168.249.129:27017/api-data'
 const listeningPort = 3000

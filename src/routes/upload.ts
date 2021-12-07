@@ -51,4 +51,25 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
   }
 })
 
+// TODO: Check if the user is actually online (calling EPCs is_online/status)
+router.post('/api/upload_measurement', async (req: Request, res: Response) => {
+  try {
+    if (!Array.isArray(req.body)) {
+        const reqData:IMeasurement = req.body
+        const data = MeasurementData.build(reqData)
+        await data.save()
+        return res.status(201).send(data)
+    } else {
+      const reqData:IMeasurement[] = req.body
+      for (let i = 0; i < reqData.length; i++) {
+        const data = MeasurementData.build(reqData[i])
+        await data.save()
+      }
+      return res.status(201).send("Successful")
+    }
+  } catch(error) {
+    return res.status(500).send("Database Error")
+  }
+})
+
 export { router as uploadRouter }
