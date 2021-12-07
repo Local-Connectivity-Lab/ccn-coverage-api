@@ -54,7 +54,7 @@ router.get('/api/sites', (_, res: Response) => {
   res.send(sites);
 });
 
-router.get('/dataRange', (_, res) => {
+router.get('/api/dataRange', (_, res) => {
   res.send(dataRange);
 });
 
