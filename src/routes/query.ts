@@ -122,7 +122,7 @@ router.get('/api/data', async (req, res) => {
   }
 });
 
-router.get('/sitesSummary', async (req, res) => {
+router.get('/api/sitesSummary', async (req, res) => {
   try {
     const timeFrom = req.query.from + '';
     const timeTo = req.query.to + '';
@@ -176,7 +176,7 @@ router.get('/sitesSummary', async (req, res) => {
   }
 });
 
-router.get('/lineSummary', async (req, res) => {
+router.get('/api/lineSummary', async (req, res) => {
   try {
     const mapType = req.query.mapType + '';
     const selectedSites = req.query.selectedSites + ''
