@@ -47,6 +47,7 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
       return res.status(201).send("Successful")
     }
   } catch(error) {
+    console.error(error)
     return res.status(500).send("Database Error")
   }
 })
@@ -68,6 +69,7 @@ router.post('/api/upload_measurement', async (req: Request, res: Response) => {
       return res.status(201).send("Successful")
     }
   } catch(error) {
+    console.error(error)
     return res.status(500).send("Database Error")
   }
 })
