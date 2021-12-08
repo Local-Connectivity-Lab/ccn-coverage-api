@@ -31,7 +31,7 @@ The body R contains:
 The header contains:
 - Hash of Public Key P_K. SHA 256 bits. Send it with 'identity' as a header key
 - Signature Sigma_R (Again, just sign R with the secret), Send it with 'signature' as a header key. 2048 bits
-
+### CAUTION: VERY OUTDATED
 ### POST `api/data`
 Upload a single data point
 
