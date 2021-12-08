@@ -21,7 +21,7 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use(json());
+app.use(json({ limit: '2mb' }));
 app.use(urlencoded({ extended: true }));
 app.use(raw({type: 'application/octet-stream', limit : '2mb'}))
 app.use(registerRouter)
