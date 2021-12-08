@@ -203,7 +203,8 @@ router.get('/api/lineSummary', async (req, res) => {
         if (siteName == undefined) {
           continue;
         }
-        const time = new Date(m.timestamp.toString().substring(0, 10)).toISOString();
+        // console.log(new Date(new Date(m.timestamp).setSeconds(0)).toISOString())
+        const time = new Date(new Date(m.timestamp).setSeconds(0)).toISOString();
         agg[siteName] = agg[siteName] ?? {};
         agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
         agg[siteName][time].sum += m[mapType];
@@ -216,13 +217,14 @@ router.get('/api/lineSummary', async (req, res) => {
         if (siteName == undefined) {
           continue;
         }
-        const time = new Date(s.timestamp.toString().substring(0, 10)).toISOString();
+        const time = new Date(new Date(s.timestamp).setSeconds(0)).toISOString();
         agg[siteName] = agg[siteName] ?? {};
         agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
         agg[siteName][time].sum += s.dbm;
         agg[siteName][time].count += 1;
       }
     }
+    console.log(agg)
     const aggData = agg as { [site: string]: { [timestamp: string]: { sum: number; count: number } } };
 
     const avgData = Object.entries(aggData).map(([k, v]) => ({
