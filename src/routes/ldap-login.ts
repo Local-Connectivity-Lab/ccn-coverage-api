@@ -4,7 +4,7 @@ import passport from 'passport'
 import LdapStrategy from 'passport-ldapauth'
 import { Admin, IAdmin, IExpressUser } from '../../models/admins'
 
-const ldapURI = 'ldaps://ldap.seattlecommunitynetwork.org'
+const ldapURI = 'ldap://ldap.seattlecommunitynetwork.org'
 const dn = 'cn=users,cn=accounts,dc=seattlecommunitynetwork,dc=org'
 
 declare global {
@@ -15,7 +15,6 @@ declare global {
     }
   }
 }
-
 
 var getLDAPConfiguration = function (req: any, callback: Function) {
   process.nextTick(function () {
@@ -39,9 +38,10 @@ passport.use(new LdapStrategy(getLDAPConfiguration,
     return done(null, user);
   }))
 
-const router = express.Router()
+const router = express.Router();
+
 function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
+  if (!req.body.user) {
     res.status(401).json({ success: false, message: "not logged in" })
   } else {
     next()
@@ -83,12 +83,14 @@ var myLogin = function (req: Request, res: Response, next: NextFunction) {
   })(req, res, next)
 }
 
+export { router as ldapRouter }
+
 router.get("/secure/user", ensureAuthenticated, function (req, res) {
+  console.log('!')
   res.json({success: true, user:req.user})
 })
 
 
-export { router as ldapRouter }
 
 
 router.post('/secure/login', myLogin);
