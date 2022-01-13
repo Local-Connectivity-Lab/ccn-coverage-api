@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express'
-import fs from 'fs'
 import passport from 'passport'
 import LdapStrategy from 'passport-ldapauth'
 import { Admin, IAdmin, IExpressUser } from '../../models/admins'
+import date from 'date-and-time';
 
 const ldapURI = 'ldap://ldap.seattlecommunitynetwork.org'
 const dn = 'cn=users,cn=accounts,dc=seattlecommunitynetwork,dc=org'
+const tokenMinutes = 30;
 
 declare global {
   namespace Express {
@@ -41,11 +42,19 @@ passport.use(new LdapStrategy(getLDAPConfiguration,
 const router = express.Router();
 
 function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (!req.body.user) {
-    res.status(401).json({ success: false, message: "not logged in" })
-  } else {
-    next()
+  if (!req.body.uid || !req.body.token) {
+    res.status(400).json({ success: false, message: "bad request" })
   }
+  Admin.findOne({ uid: req.body.uid, token: req.body.token }).exec().then(user => {
+    if (!user) {
+      res.status(401).json({ success: false, message: "not logged in" })
+    }
+    else if (user.exp < new Date()) {
+      res.status(401).json({ success: false, message: "session expired" })
+    } else {
+      res.status(200).json({ success: true, message: "logged in" })
+    }
+  })
 }
 
 passport.serializeUser(function (user, done) {
@@ -53,17 +62,20 @@ passport.serializeUser(function (user, done) {
 })
 
 passport.deserializeUser(function (id, done) {
-  Admin.findOne({ uid: id }).exec()
-    .then(user => {
-      if (!user) {
-        done(new Error(`Cannot find user with uid=${id}`))
-      } else {
-        done(null, user)
-      }
-    })
+  Admin.findOne({ uid: id }).exec().then(user => {
+    if (!user) {
+      done(new Error(`Cannot find user with uid=${id}`))
+    } else {
+      done(null, user)
+    }
+  })
 })
 
-var myLogin = function (req: Request, res: Response, next: NextFunction) {
+function newToken() {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+var ldapLogin = function (req: Request, res: Response, next: NextFunction) {
   passport.authenticate('ldapauth', function (err, user, info) {
     if (err) {
       return next(err)
@@ -75,8 +87,10 @@ var myLogin = function (req: Request, res: Response, next: NextFunction) {
         if (loginErr) {
           return next(loginErr);
         }
-        Admin.findOneAndUpdate({uid: user.uid}, user, {upsert: true, new: true}).exec().then(user=> {
-          return res.json({ success: true, message: 'authentication succeeded', user: Object.assign({name: user.uid}, user) });
+        const token = newToken(); 
+        const exp = date.addMinutes(new Date(), tokenMinutes);
+        Admin.findOneAndUpdate({uid: user.uid}, { token: token, exp: exp }, {upsert: true, new: true}).exec().then(()=> {
+          return res.json({ success: true, message: 'authentication succeeded', token: token });
         })
       });
     }
@@ -85,12 +99,7 @@ var myLogin = function (req: Request, res: Response, next: NextFunction) {
 
 export { router as ldapRouter }
 
-router.get("/secure/user", ensureAuthenticated, function (req, res) {
-  console.log('!')
-  res.json({success: true, user:req.user})
-})
+router.get("/secure/user", ensureAuthenticated);
 
 
-
-
-router.post('/secure/login', myLogin);
+router.post('/secure/login', ldapLogin);

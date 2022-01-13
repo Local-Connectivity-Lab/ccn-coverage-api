@@ -3,19 +3,27 @@ import { Request } from 'express'
 
 interface IAdmin {
   uid: string,
+  token: string,
+  expiration: Date
 }
 
+
+interface ITokenRequest extends Request {
+  uid: string,
+  token: string
+}
 interface IExpressUser extends Request {
   uid: string,
 }
 
 interface AdminModelInterface extends mongoose.Model<AdminDoc> {
   build(attr: IAdmin): AdminDoc
-  randomBuild(): AdminDoc
 }
 
 interface AdminDoc extends mongoose.Document {
   uid: string,
+  token: string,
+  exp: Date
 }
 
 const adminSchema = new mongoose.Schema({
@@ -23,6 +31,14 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  token: {
+    type: String,
+    required: true
+  },
+  exp: {
+    type: Date,
+    required: true
+  }
 }, {
   versionKey: false
 })
@@ -35,4 +51,4 @@ adminSchema.statics.build = (attr: IAdmin) => {
 
 const Admin = mongoose.model<AdminDoc, AdminModelInterface>('Admin', adminSchema)
 
-export { Admin, IAdmin, IExpressUser }
+export { Admin, IAdmin, IExpressUser, ITokenRequest }
