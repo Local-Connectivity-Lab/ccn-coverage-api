@@ -45,7 +45,7 @@ function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (!req.body.uid || !req.body.token) {
     res.status(400).json({ success: false, message: "bad request" })
   }
-  Admin.findOne({ uid: req.body.uid, token: req.body.token }).exec().then(user => {
+  Admin.findOne({ uid: req.body.username, token: req.body.token }).exec().then(user => {
     if (!user) {
       res.status(401).json({ success: false, message: "not logged in" })
     }
