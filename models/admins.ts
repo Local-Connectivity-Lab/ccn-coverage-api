@@ -51,4 +51,4 @@ adminSchema.statics.build = (attr: IAdmin) => {
 
 const Admin = mongoose.model<AdminDoc, AdminModelInterface>('Admin', adminSchema)
 
-export { Admin, IAdmin, IExpressUser, ITokenRequest }
+export { Admin, IAdmin, AdminDoc, IExpressUser, ITokenRequest }

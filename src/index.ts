@@ -6,12 +6,13 @@ import { uploadRouter } from './routes/upload'
 import { registerRouter } from './routes/register'
 import { queryRouter } from './routes/query'
 import { ldapRouter } from './routes/ldap-login'
+import { newUserRouter } from './routes/new-user'
 
 // Change this line to match your mongodb server
 // TODO: Work with ENV
-const mongodbURI = 'mongodb://localhost:27017/api-data'
 // const mongodbURI = 'mongodb://localhost:27017/api-data'
-// const mongodbURI = 'mongodb://192.168.249.129:27017/api-data'
+// const mongodbURI = 'mongodb://localhost:27017/api-data'
+const mongodbURI = 'mongodb://192.168.249.129:27017/api-data'
 const listeningPort = 3000
 
 const app = express()
@@ -27,10 +28,11 @@ app.use((_, res, next) => {
 app.use(json({ limit: '2mb' }));
 app.use(urlencoded({ extended: true }));
 app.use(raw({type: 'application/octet-stream', limit : '2mb'}))
-app.use(registerRouter)
+// app.use(registerRouter)
 app.use(uploadRouter)
 app.use(queryRouter)
 app.use(ldapRouter)
+app.use(newUserRouter)
 app.use(passport.initialize());
 
 

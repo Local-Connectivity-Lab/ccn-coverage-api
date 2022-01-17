@@ -8,8 +8,14 @@
 # testing
 /coverage
 /sslcert
+/keys
+/key
+/src/keys
+api-keys.ts
 .crt
 .key
+api-pub
+api-secret
 
 # production
 /build
