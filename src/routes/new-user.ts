@@ -27,8 +27,8 @@ router.post('/api/new-user', async (req: Request, res: Response) => {
     res.status(401).send('sesssion expired');
     return;
   }
-  Crypto.generateKeyPair('ed25519', {
-    modulusLength: 4096,
+  Crypto.generateKeyPair('rsa', {
+    modulusLength: 2048,
   }, (err, publicKey, privateKey) => {
     if (err) {
       res.status(500).send(err);
@@ -36,9 +36,9 @@ router.post('/api/new-user', async (req: Request, res: Response) => {
       var result = {};
       const pk = publicKey.export({ format: 'der', type: 'spki' });
       const sk = privateKey.export({ format: 'der', type: 'pkcs8' });
-      const signature = Crypto.sign(null, sk, ska).toString('hex');
+      const signature = Crypto.sign('sha256', sk, ska).toString('hex');
       // TODO: Concatenation
-      const skpk = sk.toString('hex') + pk.toString('hex')
+      const skpk = new Uint8Array([ ...sk, ...pk]);
       const identity = Crypto.createHash('sha256').update(skpk).digest('hex');
       result = {
         sigma_t: signature,

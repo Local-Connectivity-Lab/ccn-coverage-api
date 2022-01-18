@@ -8,32 +8,64 @@ import date from 'date-and-time';
 const router = express.Router()
 
 // Need to register within n minutes after issue a QR code
-const registerTimeoutMin = 30;
+const registerTimeoutMin = 30000;
 
 router.post('/api/register', async (req: Request, res: Response) => {
-  const sigma_r = req.body.sigma_r;
-  const h = req.body.h;
-  const r = req.body.r;
-  const user = await User.findOne({ identity: h });
+  const sigma_r = Buffer.from(req.body.sigma_r, 'hex');
+  const h = Buffer.from(req.body.h, 'hex');
 
+  // Deconstruct hashes
+  const hpkr = h.slice(0, 32).toString('hex');
+  const hsec = h.slice(32).toString('hex');
+  const R = Buffer.from(req.body.R, 'hex');
+  const r = new Uint8Array(R);
+
+  // Get user infromation from the database by identity.
+  const user = await User.findOne({ identity: hsec });
+
+  // Return error when the registration is never issued by admins
   if (!user) {
     res.status(401).send('registration not issued by admins');
     return;
   }
 
+  // Check if the registration period has expired
   const exp = date.addMinutes(user.issueDate, registerTimeoutMin);
   if (new Date() > exp) {
     res.status(403).send('registration period expired');
     return;
   }
-  
-  const pk = Crypto.createPublicKey(user.publicKey);
-  if (!Crypto.verify('ed25519', h, pk, sigma_r)) {
+
+  // Get public key of the pending registration from the database
+  const pk = Crypto.createPublicKey({
+    key: Buffer.from(user.publicKey, 'hex'),
+    format: 'der',
+    type: 'spki'
+  });
+
+  // Verify signature
+  if (!Crypto.verify('sha256', h, pk, sigma_r)) {
     res.status(403).send('invalid signature');
     return;
   }
-  console.log(h);
-  // const hpkr = 
+
+  // Verify if the requet from Android matches the issued registration.
+  const pkt = pk.export({ format: 'der', type: 'spki' });
+  const pktr = new Uint8Array([ ...pkt, ...r]);
+  const hpktr = Crypto.createHash('sha256').update(pktr).digest('hex');
+  if (hpktr !== hpkr) {
+    res.status(403).send('outdate request, please try again');
+    return;
+  }
+
+  // Register the user
+  User.findOneAndUpdate({identity: hsec, }, {
+    registered: true,
+  }, {upsert: true, new: true}).exec().then(()=> {
+    res.status(201).send('registered');
+  }).catch((err) => {
+    res.status(503).send('database error');
+  })
 
 });
 
