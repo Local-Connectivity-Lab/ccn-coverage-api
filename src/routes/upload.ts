@@ -1,6 +1,8 @@
 import express, {Request, Response} from 'express'
+import * as Crypto from "crypto"
 
 import { ISignal, SignalData } from '../../models/signal'
+import { Admin, IAdmin } from '../../models/admins'
 import { IMeasurement, MeasurementData } from '../../models/measurement'
 
 // const dom = new JSDOM('')
@@ -8,30 +10,27 @@ import { IMeasurement, MeasurementData } from '../../models/measurement'
 // global.document = dom.window.document
 // global.navigator = dom.window.navigator
 
-const router = express.Router();
-
-// Generate mock-up measurement data
-router.get('/dev/gen', async (req: Request, res: Response) => {
-  const reqData:{ num?: string} = req.query
-  let num: number = 100
-  let data: IMeasurement[] = new Array()
-  // console.log(req.query)
-  if ('num' in reqData && typeof reqData.num === 'string') {
-    const reqNum: number = parseInt(reqData.num)
-    if (!isNaN(reqNum)) { 
-      num = reqNum
+async function isAdminAuthenticated (req: Request) {
+  // Bypass if there is an unexpired admin token
+  if (req.get('token')) {
+    const user = await Admin.findOne({ uid: req.get('username'), token: req.get('token') }).exec();
+    if (!user) {
+      return false;
+    } else if (user.exp < new Date()){
+      return false;
     }
+    return true;
   }
-  for (let i = 0; i < num; i++) {
-    let idLess:any = JSON.parse(JSON.stringify(MeasurementData.randomBuild()))
-    delete idLess['_id']
-    data.push(idLess);
-  }
-  return res.status(200).send(data)
-})
- 
+  return false;
+}
+
+const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
 router.post('/api/upload_signal', async (req: Request, res: Response) => {
+  if (!isAdminAuthenticated(req)) {
+    res.status(401).send("not authenticated");
+    return;
+  }
   try {
     if (!Array.isArray(req.body)) {
         const reqData:ISignal = req.body
@@ -54,6 +53,10 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
 
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
 router.post('/api/upload_measurement', async (req: Request, res: Response) => {
+  if (!isAdminAuthenticated(req)) {
+    res.status(401).send("not authenticated");
+    return;
+  }
   try {
     if (!Array.isArray(req.body)) {
         const reqData:IMeasurement = req.body

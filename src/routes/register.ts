@@ -20,6 +20,12 @@ router.post('/api/register', async (req: Request, res: Response) => {
   const R = Buffer.from(req.body.R, 'hex');
   const r = new Uint8Array(R);
 
+  // Check if the user is already registered
+  const authUser = await User.findOne({ identity: hpkr });
+  if (authUser && authUser.registered) {
+    res.status(200).send('already registered');
+    return;
+  }
   // Get user infromation from the database by identity.
   const user = await User.findOne({ identity: hsec });
 
@@ -61,12 +67,13 @@ router.post('/api/register', async (req: Request, res: Response) => {
   // Register the user
   User.findOneAndUpdate({identity: hsec, }, {
     registered: true,
+    identity: hpkr,
+    isEnabled: true
   }, {upsert: true, new: true}).exec().then(()=> {
     res.status(201).send('registered');
   }).catch((err) => {
     res.status(503).send('database error');
   })
-
 });
 
 export { router as registerRouter }

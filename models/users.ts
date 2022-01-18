@@ -7,6 +7,7 @@ interface IUser {
   lastName: string,
   registered: boolean,
   issueDate: Date,
+  isEnabled: boolean,
   publicKey: string,
   lastOnline: string
 }
@@ -23,6 +24,7 @@ interface UserDoc extends mongoose.Document {
   lastName: string,
   registered: boolean,
   issueDate: Date,
+  isEnabled: boolean,
   publicKey: string,
   lastOnline: string
 }
@@ -50,6 +52,10 @@ const userSchema = new mongoose.Schema({
   },
   issueDate: {
     type: Date,
+    required: true
+  },
+  isEnabled: {
+    type: Boolean,
     required: true
   },
   publicKey: {

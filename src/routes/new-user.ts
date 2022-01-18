@@ -52,6 +52,7 @@ router.post('/api/new-user', async (req: Request, res: Response) => {
         lastName: lastName,
         registered: false,
         issueDate: new Date(),
+        isEnabled: false,
         publicKey: pk.toString('hex')
       }, {upsert: true, new: true}).exec().then(()=> {
         res.status(201).send(result);
