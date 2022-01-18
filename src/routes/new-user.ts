@@ -17,8 +17,8 @@ router.post('/secure/new-user', async (req: Request, res: Response) => {
   const username = req.body.username;
   const token = req.body.token;
   const email = req.body.email || "";
-  const firstName = req.body.first_name || "";
-  const lastName = req.body.last_name || "";
+  const firstName = req.body.firstName || "";
+  const lastName = req.body.lastName || "";
   const user = await Admin.findOne({ uid: username, token: token }).exec();
   if (!user) {
     res.status(401).send('user is not authenticated');
