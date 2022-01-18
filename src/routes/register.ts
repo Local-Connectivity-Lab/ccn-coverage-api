@@ -1,64 +1,40 @@
 import express, {Request, Response} from 'express'
 import * as Crypto from "crypto"
-const axios = require('axios').default
-
+import fs from 'fs';
 import { User, IUser } from '../../models/users'
 import { IRegisterRequest, AuthenticationMessage } from '../../models/register'
-
-const EPC_API_ENDPOINT = 'http://localhost:3001/api/'
-
-// Create axios instance for registering the user to the EPC
-const instance = axios.create({
-  baseURL: EPC_API_ENDPOINT,
-  timeout: 1000,
-});
+import date from 'date-and-time';
 
 const router = express.Router()
 
-// TODO: Work with hardware backed attestation
+// Need to register within n minutes after issue a QR code
+const registerTimeoutMin = 30;
+
 router.post('/api/register', async (req: Request, res: Response) => {
-  // Extract data from the request body.
-  const reqBody:IRegisterRequest = req.body
-  const publicKey = reqBody.publicKey
-  const message = reqBody.message
-  const sigMessage:string = reqBody.sigMessage
+  const sigma_r = req.body.sigma_r;
+  const h = req.body.h;
+  const r = req.body.r;
+  const user = await User.findOne({ identity: h });
 
-  // Serialize data from the authentication message.
-  const authMessage = new AuthenticationMessage(message)
-  const identity = authMessage.identity
-  const attestation = authMessage.attestation
-
-  // Verify the signature
-  const messageBuffer = new Uint8Array(message);
-  const sigBuffer = Buffer.from(sigMessage, 'hex');
-  const keyObject = Crypto.createPublicKey(publicKey)
-
-  const verified = Crypto.verify(null, messageBuffer, keyObject, sigBuffer)
-  if (!verified) {
-    res.status(401).send('Signature Invalid')
+  if (!user) {
+    res.status(401).send('registration not issued by admins');
     return;
   }
 
-  // Asking EPC's database to register a new user
-  const response = await instance.post('register', 
-    {
-      'identity': identity,
-      'public_key': publicKey
-    }
-  )
-
-  // Register to the database if successful
-  if (response.data['success'] == true) {
-    const userData = User.build({
-      identity: identity,
-      public_key: publicKey,
-      last_online: new Date().toISOString()
-    })
-    await userData.save()
-    res.status(201).send(response.data)
-  } else {
-    res.status(200).send(response.data)
+  const exp = date.addMinutes(user.issueDate, registerTimeoutMin);
+  if (new Date() > exp) {
+    res.status(403).send('registration period expired');
+    return;
   }
-})
+  
+  const pk = Crypto.createPublicKey(user.publicKey);
+  if (!Crypto.verify('ed25519', h, pk, sigma_r)) {
+    res.status(403).send('invalid signature');
+    return;
+  }
+  console.log(h);
+  // const hpkr = 
+
+});
 
 export { router as registerRouter }

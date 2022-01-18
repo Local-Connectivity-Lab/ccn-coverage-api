@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express'
 import * as Crypto from "crypto"
 import fs from 'fs';
 import { Admin, AdminDoc } from '../../models/admins'
+import { User, UserDoc } from '../../models/users'
 import { deflateRaw } from 'zlib';
 
 const router = express.Router();
@@ -15,6 +16,9 @@ const ska = Crypto.createPrivateKey(ska_str);
 router.post('/api/new-user', async (req: Request, res: Response) => {
   const username = req.body.username;
   const token = req.body.token;
+  const email = req.body.email || "";
+  const firstName = req.body.first_name || "";
+  const lastName = req.body.last_name || "";
   const user = await Admin.findOne({ uid: username, token: token }).exec();
   if (!user) {
     res.status(401).send('user is not authenticated');
@@ -33,15 +37,27 @@ router.post('/api/new-user', async (req: Request, res: Response) => {
       const pk = publicKey.export({ format: 'der', type: 'spki' });
       const sk = privateKey.export({ format: 'der', type: 'pkcs8' });
       const signature = Crypto.sign(null, sk, ska).toString('hex');
+      // TODO: Concatenation
+      const skpk = sk.toString('hex') + pk.toString('hex')
+      const identity = Crypto.createHash('sha256').update(skpk).digest('hex');
       result = {
         sigma_t: signature,
         sk_t: sk.toString('hex'),
         pk_a: pka.export({ format: 'der', type: 'spki' }).toString('hex')
       }
-      console.log(result);
-      
-      // console.log(privateKey.toString('hex'));
-      res.status(201).send(result);
+      // console.log(result);
+      User.findOneAndUpdate({identity: identity, }, {
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        registered: false,
+        issueDate: new Date(),
+        publicKey: pk.toString('hex')
+      }, {upsert: true, new: true}).exec().then(()=> {
+        res.status(201).send(result);
+      }).catch((err) => {
+        res.status(503).send('database error');
+      })
     }
   });
 });

@@ -2,8 +2,13 @@ import mongoose from 'mongoose';
 
 interface IUser {
   identity: string,
-  public_key: string,
-  last_online: string
+  email: string,
+  firstName: string,
+  lastName: string,
+  registered: boolean,
+  issueDate: Date,
+  publicKey: string,
+  lastOnline: string
 }
 
 interface UserModelInterface extends mongoose.Model<UserDoc> {
@@ -13,8 +18,13 @@ interface UserModelInterface extends mongoose.Model<UserDoc> {
 
 interface UserDoc extends mongoose.Document {
   identity: string,
-  public_key: string,
-  last_online: string
+  email: string,
+  firstNamme: string,
+  lastName: string,
+  registered: boolean,
+  issueDate: Date,
+  publicKey: string,
+  lastOnline: string
 }
 
 const userSchema = new mongoose.Schema({
@@ -22,7 +32,27 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  public_key: {
+  email: {
+    type: String,
+    required: false
+  },
+  firstName: {
+    type: String,
+    required: false
+  },
+  lastName: {
+    type: String,
+    required: false
+  },
+  registered: {
+    type: Boolean,
+    required: true
+  },
+  issueDate: {
+    type: Date,
+    required: true
+  },
+  publicKey: {
     type: String,
     required: true
   },
@@ -42,4 +72,4 @@ userSchema.statics.build = (attr: IUser) => {
 
 const User = mongoose.model<UserDoc, UserModelInterface>('User', userSchema)
 
-export { User, IUser }
+export { User, IUser, UserDoc }
