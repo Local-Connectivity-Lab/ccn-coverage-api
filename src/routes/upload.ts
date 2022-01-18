@@ -26,7 +26,7 @@ async function isAdminAuthenticated (req: Request) {
 
 const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/api/upload_signal', async (req: Request, res: Response) => {
+router.post('/secure/upload_signal', async (req: Request, res: Response) => {
   if (!isAdminAuthenticated(req)) {
     res.status(401).send("not authenticated");
     return;
@@ -52,7 +52,7 @@ router.post('/api/upload_signal', async (req: Request, res: Response) => {
 })
 
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/api/upload_measurement', async (req: Request, res: Response) => {
+router.post('/secure/upload_measurement', async (req: Request, res: Response) => {
   if (!isAdminAuthenticated(req)) {
     res.status(401).send("not authenticated");
     return;

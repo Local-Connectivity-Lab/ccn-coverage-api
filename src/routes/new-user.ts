@@ -13,7 +13,7 @@ const ska = Crypto.createPrivateKey(ska_str);
 
 // Add a new register UE by generating a new key pair.
 // Need an admin token for this API
-router.post('/api/new-user', async (req: Request, res: Response) => {
+router.post('/secure/new-user', async (req: Request, res: Response) => {
   const username = req.body.username;
   const token = req.body.token;
   const email = req.body.email || "";
