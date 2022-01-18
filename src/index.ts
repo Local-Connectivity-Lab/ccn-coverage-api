@@ -7,6 +7,7 @@ import { registerRouter } from './routes/register'
 import { queryRouter } from './routes/query'
 import { ldapRouter } from './routes/ldap-login'
 import { newUserRouter } from './routes/new-user'
+import { usersRouter } from './routes/users'
 
 // Change this line to match your mongodb server
 // TODO: Work with ENV
@@ -33,6 +34,7 @@ app.use(uploadRouter)
 app.use(queryRouter)
 app.use(ldapRouter)
 app.use(newUserRouter)
+app.use(usersRouter)
 app.use(passport.initialize());
 
 
