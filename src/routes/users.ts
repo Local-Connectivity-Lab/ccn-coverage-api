@@ -21,7 +21,7 @@ async function isAuthenticated(username: string, token: string) {
 
 // Get users
 // Need an admin token for this API
-router.post('/api/get-users', async (req: Request, res: Response) => {
+router.post('/secure/get-users', async (req: Request, res: Response) => {
   const username = req.body.username || "";
   const token = req.body.token || "";
   if (!isAuthenticated) {
@@ -38,7 +38,7 @@ router.post('/api/get-users', async (req: Request, res: Response) => {
   })
 });
 
-router.post('/api/toggle-users', async (req: Request, res: Response) => {
+router.post('/secure/toggle-users', async (req: Request, res: Response) => {
   const username = req.body.username || "";
   const token = req.body.token || "";
   if (!isAuthenticated) {
