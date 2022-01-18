@@ -90,8 +90,8 @@ var ldapLogin = function (req: Request, res: Response, next: NextFunction) {
         }
         const token = newToken(); 
         const exp = date.addMinutes(new Date(), tokenMinutes);
-        Admin.findOneAndUpdate({uid: user.uid}, { token: token, exp: exp }, {upsert: true, new: true}).exec().then(()=> {
-          return res.json({ success: true, message: 'authentication succeeded', token: token, exp: exp });
+        Admin.findOneAndUpdate({uid: user.uid}, {token: token, exp: exp }, {upsert: true, new: true}).exec().then(()=> {
+          return res.json({ success: true, message: 'authentication succeeded', username: user.uid, token: token, exp: exp });
         })
       });
     }
