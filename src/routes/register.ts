@@ -68,7 +68,8 @@ router.post('/api/register', async (req: Request, res: Response) => {
   User.findOneAndUpdate({identity: hsec, }, {
     registered: true,
     identity: hpkr,
-    isEnabled: true
+    isEnabled: true,
+    privateKey: ""
   }, {upsert: true, new: true}).exec().then(()=> {
     res.status(201).send('registered');
   }).catch((err) => {

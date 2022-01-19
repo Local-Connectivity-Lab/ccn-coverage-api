@@ -53,7 +53,8 @@ router.post('/secure/new-user', async (req: Request, res: Response) => {
         registered: false,
         issueDate: new Date(),
         isEnabled: false,
-        publicKey: pk.toString('hex')
+        publicKey: pk.toString('hex'),
+        privateKey: sk.toString('hex')
       }, {upsert: true, new: true}).exec().then(()=> {
         res.status(201).send(result);
       }).catch((err) => {
