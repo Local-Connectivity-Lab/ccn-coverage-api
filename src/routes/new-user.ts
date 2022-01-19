@@ -54,7 +54,7 @@ router.post('/secure/new-user', async (req: Request, res: Response) => {
         issueDate: new Date(),
         isEnabled: false,
         publicKey: pk.toString('hex'),
-        privateKey: sk.toString('hex')
+        qrCode: JSON.stringify(result)
       }, {upsert: true, new: true}).exec().then(()=> {
         res.status(201).send(result);
       }).catch((err) => {

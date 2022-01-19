@@ -9,7 +9,7 @@ interface IUser {
   issueDate: Date,
   isEnabled: boolean,
   publicKey: string,
-  privateKey: string,
+  qrCode: string,
   lastOnline: string
 }
 
@@ -27,7 +27,7 @@ interface UserDoc extends mongoose.Document {
   issueDate: Date,
   isEnabled: boolean,
   publicKey: string,
-  privateKey: string,
+  qrCode: string,
   lastOnline: string
 }
 
@@ -64,7 +64,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  privateKey: {
+  qrCode: {
     type: String,
     required: true
   },
