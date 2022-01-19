@@ -5,55 +5,60 @@ import { ISignal, SignalData } from '../../models/signal'
 import { User, IUser } from '../../models/users'
 import { IMeasurement, MeasurementData } from '../../models/measurement'
 
-async function isAuthenticated(req: Request) {
-  const hpkr = req.body.h_pkr;
-  const signature = req.body.sigma_m;
-  const message = new Uint8Array(req.body.message);
+async function isAuthenticated(req: Request, res: Response) {
+  const hpkr = Buffer.from(req.body.h_pkr, 'hex');
+  const signature = Buffer.from(req.body.sigma_m, 'hex');
+  const message = Buffer.from(req.body.M);
   const user = await User.findOne({ identity: req.body.hpkr }).exec();
-  if (!user) return false;
+  if (!user) {
+    res.status(401).send('user not found')
+    return false;
+  };
   const pkt = Crypto.createPublicKey({
     key: Buffer.from(user.publicKey, 'hex'),
     format: 'der',
     type: 'spki',
   });
   if (!Crypto.verify('sha256', message, pkt, signature)) {
+    res.status(403).send('invalid signature');
     return false;
   }
   return true;
 }
 const router = express.Router();
-// TODO: Check if the user is actually online (calling EPCs is_online/status)
 router.post('/api/report_signal', async (req: Request, res: Response) => {
-  if (!isAuthenticated(req)) {
-    res.status(401).send("not authenticated");
+  if (!isAuthenticated(req, res)) {
     return;
   }
-  req.body.message;
-})
-
-// TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/api/report_measurement', async (req: Request, res: Response) => {
-  if (!isAuthenticated(req)) {
-    res.status(401).send("not authenticated");
-    return;
-  }
+  const M = new Uint8Array(Buffer.from(req.body.M));
+  const decoder = new TextDecoder();
+  const serializedContents = decoder.decode(M);
+  const signal:ISignal = JSON.parse(serializedContents);
   try {
-    if (!Array.isArray(req.body)) {
-        const reqData:IMeasurement = req.body
-        const data = MeasurementData.build(reqData)
-        await data.save()
-        return res.status(201).send(data)
-    } else {
-      const reqData:IMeasurement[] = req.body
-      for (let i = 0; i < reqData.length; i++) {
-        const data = MeasurementData.build(reqData[i])
-        await data.save()
-      }
-      return res.status(201).send("Successful")
-    }
+    const data = SignalData.build(signal)
+    await data.save()
+    return res.status(201).send('successful')
   } catch(error) {
     console.error(error)
-    return res.status(500).send("Database Error")
+    return res.status(500).send('database Error')
+  }
+})
+
+router.post('/api/report_measurement', async (req: Request, res: Response) => {
+  if (!isAuthenticated(req, res)) {
+    return;
+  }
+  const M = new Uint8Array(Buffer.from(req.body.M));
+  const decoder = new TextDecoder();
+  const serializedContents = decoder.decode(M);
+  const signal:IMeasurement = JSON.parse(serializedContents);
+  try {
+    const data = MeasurementData.build(signal)
+    await data.save()
+    return res.status(201).send('successful')
+  } catch(error) {
+    console.error(error)
+    return res.status(500).send('database Error')
   }
 })
 
