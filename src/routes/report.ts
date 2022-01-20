@@ -27,6 +27,10 @@ async function isAuthenticated(req: Request, res: Response) {
 }
 const router = express.Router();
 router.post('/api/report_signal', async (req: Request, res: Response) => {
+  if (!req.body || !req.body.h_pkr || !req.body.sigma_m || !req.body.M) {
+    res.status(400).send('bad request');
+    return;
+  }
   if (!isAuthenticated(req, res)) {
     return;
   }
@@ -45,6 +49,10 @@ router.post('/api/report_signal', async (req: Request, res: Response) => {
 })
 
 router.post('/api/report_measurement', async (req: Request, res: Response) => {
+  if (!req.body || !req.body.h_pkr || !req.body.sigma_m || !req.body.M) {
+    res.status(400).send('bad request');
+    return;
+  }
   if (!isAuthenticated(req, res)) {
     return;
   }
