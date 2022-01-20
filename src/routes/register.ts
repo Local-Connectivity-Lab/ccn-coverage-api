@@ -11,6 +11,10 @@ const router = express.Router()
 const registerTimeoutMin = 30000;
 
 router.post('/api/register', async (req: Request, res: Response) => {
+  if (!req.body || !req.body.sigma_r || !req.body.h || !req.body.R) {
+    res.status(400).send('bad request');
+    return;
+  }
   const sigma_r = Buffer.from(req.body.sigma_r, 'hex');
   const h = Buffer.from(req.body.h, 'hex');
 
