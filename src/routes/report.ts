@@ -9,7 +9,7 @@ async function isAuthenticated(req: Request, res: Response) {
   const hpkr = Buffer.from(req.body.h_pkr, 'hex');
   const signature = Buffer.from(req.body.sigma_m, 'hex');
   const message = Buffer.from(req.body.M);
-  const user = await User.findOne({ identity: req.body.hpkr }).exec();
+  const user = await User.findOne({ identity: req.body.h_pkr }).exec();
   if (!user) {
     res.status(401).send('user not found')
     return false;
