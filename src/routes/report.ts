@@ -70,4 +70,4 @@ router.post('/api/report_measurement', async (req: Request, res: Response) => {
   }
 })
 
-export { router as uploadRouter }
+export { router as reportRouter }
