@@ -35,7 +35,7 @@ router.post('/api/report_signal', async (req: Request, res: Response) => {
     return;
   }
   try {
-  const M = new Uint8Array(Buffer.from(req.body.M, 'hex'));
+  const M = Buffer.from(req.body.M, 'hex');
   const decoder = new TextDecoder();
   const serializedContents = decoder.decode(M);
     const signal:ISignal = JSON.parse(serializedContents);
