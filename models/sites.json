@@ -91,10 +91,10 @@
   },
   {
     "name":"Testing Site",
-    "latitude":47.38639,
-    "longitude":-122.22205,
+    "latitude":47.4,
+    "longitude":-122.24,
     "status":"in-conversation",
-    "address":"930 E James St, Kent, WA 98031",
+    "address":"TEST",
     "cell_id":[
       "12345678"
     ]
