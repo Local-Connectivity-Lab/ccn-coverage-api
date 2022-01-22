@@ -4,7 +4,8 @@
     "latitude":47.23911,
     "longitude":-122.44989,
     "status":"active",
-    "address":"2309 S L St, Tacoma, WA 98405"
+    "address":"2309 S L St, Tacoma, WA 98405",
+    "cell_id": []
   },
   {
     "name":"SURGEtacoma",
@@ -31,14 +32,16 @@
     "latitude":47.52391,
     "longitude":-122.27636,
     "status":"in-conversation",
-    "address":"8812 Renton Ave S, Seattle, WA 98118"
+    "address":"8812 Renton Ave S, Seattle, WA 98118",
+    "cell_id": []
   },
   {
     "name":"ALTSpace",
     "latitude":47.60816,
     "longitude":-122.30192,
     "status":"in-conversation",
-    "address":"2318 E Cherry St, Seattle, WA 98122"
+    "address":"2318 E Cherry St, Seattle, WA 98122",
+    "cell_id": []
   },
   {
     "name":"Franklin High School",
@@ -75,23 +78,25 @@
     "latitude":47.66613,
     "longitude":-122.31374,
     "status":"in-conversation",
-    "address":"5031 University Way NE, Seattle, WA 98105"
+    "address":"5031 University Way NE, Seattle, WA 98105",
+    "cell_id": []
   },
   {
     "name":"Hillside Church Kent",
     "latitude":47.38639,
     "longitude":-122.22205,
     "status":"in-conversation",
-    "address":"930 E James St, Kent, WA 98031"
+    "address":"930 E James St, Kent, WA 98031",
+    "cell_id": []
   },
   {
     "name":"Testing Site",
-    "cell_id":[
-      "12345678"
-    ],
     "latitude":47.38639,
     "longitude":-122.22205,
     "status":"in-conversation",
-    "address":"930 E James St, Kent, WA 98031"
+    "address":"930 E James St, Kent, WA 98031",
+    "cell_id":[
+      "12345678"
+    ]
   }
 ]
