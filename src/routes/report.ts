@@ -56,11 +56,11 @@ router.post('/api/report_measurement', async (req: Request, res: Response) => {
   if (!isAuthenticated(req, res)) {
     return;
   }
-  const M = new Uint8Array(Buffer.from(req.body.M));
-  const decoder = new TextDecoder();
-  const serializedContents = decoder.decode(M);
-  const signal:IMeasurement = JSON.parse(serializedContents);
   try {
+    const M = new Uint8Array(Buffer.from(req.body.M, 'hex'));
+    const decoder = new TextDecoder();
+    const serializedContents = decoder.decode(M);
+    const signal:IMeasurement = JSON.parse(serializedContents);
     const data = MeasurementData.build(signal)
     await data.save()
     return res.status(201).send('successful')
