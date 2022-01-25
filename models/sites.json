@@ -96,7 +96,8 @@
     "status":"in-conversation",
     "address":"TEST",
     "cell_id":[
-      "12345678"
+      "12345678",
+      "9382649"
     ]
   }
 ]
