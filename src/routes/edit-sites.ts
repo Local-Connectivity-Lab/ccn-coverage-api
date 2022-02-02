@@ -4,8 +4,8 @@ import { Admin, IAdmin } from '../../models/admins'
 
 async function isAdminAuthenticated (req: Request) {
   // Bypass if there is an unexpired admin token
-  if (req.headers['token'] && req.headers['username']) {
-    const user = await Admin.findOne({ uid: req.headers['username'], token: req.headers['token'] }).exec();
+  if (req.body.token && req.body.username) {
+    const user = await Admin.findOne({ uid: req.body.username, token: req.body.token }).exec();
     if (!user) {
       return false;
     } else if (user.exp < new Date()){
@@ -24,7 +24,7 @@ router.post('/secure/edit_sites', async (req: Request, res: Response) => {
     return;
   }
   try {
-    const sites = req.body;
+    const sites = req.body.sites;
     fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites), function(err) {
       if (err) {
         console.error(err);
