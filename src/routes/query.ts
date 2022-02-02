@@ -32,7 +32,7 @@ type Site = {
 const average = (numbers: number[]) => sum(numbers) / numbers.length;
 const sum = (numbers: number[]) => numbers.reduce((total, aNumber) => total + aNumber, 0);
 
-const sites: Site[] = JSON.parse(
+var sites: Site[] = JSON.parse(
   fs.readFileSync('models/sites.json').toString(),
 );
 
@@ -51,6 +51,9 @@ for (let site of sites) {
 const dataRange = getDataRange(sites);
 
 router.get('/api/sites', (_, res: Response) => {
+  sites = JSON.parse(
+    fs.readFileSync('models/sites.json').toString(),
+  );
   res.send(sites);
 });
 
