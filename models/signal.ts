@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import sites from './sites.json';
 
 interface ISignal {
   latitude: string
