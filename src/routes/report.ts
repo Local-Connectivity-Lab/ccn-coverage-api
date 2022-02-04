@@ -31,7 +31,7 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
 const router = express.Router();
 const reportSignal = (req: Request, res: Response) => {
   try {
-    const M = Buffer.from(req.body.M, 'hex');
+    const M = new Uint8Array(Buffer.from(req.body.M, 'hex'));
     const decoder = new TextDecoder();
     const serializedContents = decoder.decode(M);
     const signal:ISignal = JSON.parse(serializedContents);
