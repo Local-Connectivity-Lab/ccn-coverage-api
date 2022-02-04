@@ -71,7 +71,7 @@ router.post('/api/report_signal', (req: Request, res: Response) => {
   
 })
 
-router.post('/api/report_measurement', async (req: Request, res: Response) => {
+router.post('/api/report_measurement', (req: Request, res: Response) => {
   if (!req.body || !req.body.h_pkr || !req.body.sigma_m || !req.body.M) {
     res.status(400).send('bad request');
     return;
