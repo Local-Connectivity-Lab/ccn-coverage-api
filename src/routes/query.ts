@@ -148,7 +148,7 @@ router.get('/api/sitesSummary', async (req, res) => {
     }
     for (let m of measurement) {
       let siteName = siteNameDict[m.cell_id];
-      if (siteName != undefined) {
+      if (siteName != undefined && output[siteName] != undefined) {
         output[siteName].ping += m.ping;
         output[siteName].download_speed += m.download_speed;
         output[siteName].upload_speed += m.upload_speed;
@@ -157,7 +157,7 @@ router.get('/api/sitesSummary', async (req, res) => {
     }
     for (let s of signal) {
       let siteName = siteNameDict[s.cell_id];
-      if (siteName != undefined) {
+      if (siteName != undefined && output[siteName] != undefined) {
         output[siteName].dbm += s.dbm;
         signalNum[siteName] += 1;
       }
