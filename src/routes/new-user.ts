@@ -4,6 +4,7 @@ import fs from 'fs';
 import { Admin, AdminDoc } from '../../models/admins'
 import { User, UserDoc } from '../../models/users'
 import { deflateRaw } from 'zlib';
+import connectEnsureLogin from 'connect-ensure-login';
 
 const router = express.Router();
 const pka_str = fs.readFileSync('keys/api-pub', {encoding:'utf8', flag:'r'});
@@ -13,24 +14,10 @@ const ska = Crypto.createPrivateKey(ska_str);
 
 // Add a new register UE by generating a new key pair.
 // Need an admin token for this API
-router.post('/secure/new-user', async (req: Request, res: Response) => {
-  if (!req.body || !req.body.username || !req.body.token) {
-    res.status(400).send('bad request');
-    return;
-  }
-  const username = req.body.username;
-  const token = req.body.token;
+router.post('/secure/new-user', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   const email = req.body.email || "";
   const firstName = req.body.firstName || "";
   const lastName = req.body.lastName || "";
-  const user = await Admin.findOne({ uid: username, token: token }).exec();
-  if (!user) {
-    res.status(401).send('user is not authenticated');
-    return;
-  } else if (user.exp < new Date()){
-    res.status(401).send('sesssion expired');
-    return;
-  }
   Crypto.generateKeyPair('ec', {
     namedCurve: 'secp256k1'
   }, (err, publicKey, privateKey) => {

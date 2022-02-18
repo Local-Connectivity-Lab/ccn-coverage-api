@@ -1,28 +1,11 @@
 import express, {Request, Response} from 'express'
 import fs from 'fs';
 import { Admin, IAdmin } from '../../models/admins'
-
-async function isAdminAuthenticated (req: Request) {
-  // Bypass if there is an unexpired admin token
-  if (req.body.token && req.body.username) {
-    const user = await Admin.findOne({ uid: req.body.username, token: req.body.token }).exec();
-    if (!user) {
-      return false;
-    } else if (user.exp < new Date()){
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
+import connectEnsureLogin from 'connect-ensure-login';
 
 const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/secure/edit_sites', async (req: Request, res: Response) => {
-  if (!await isAdminAuthenticated(req)) {
-    res.status(401).send("not authenticated");
-    return;
-  }
+router.post('/secure/edit_sites', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   try {
     const sites = req.body.sites;
     fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites), function(err) {

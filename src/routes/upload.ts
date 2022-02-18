@@ -4,33 +4,16 @@ import * as Crypto from "crypto"
 import { ISignal, SignalData } from '../../models/signal'
 import { Admin, IAdmin } from '../../models/admins'
 import { IMeasurement, MeasurementData } from '../../models/measurement'
+import connectEnsureLogin from 'connect-ensure-login';
 
 // const dom = new JSDOM('')
 // global.window = dom.window as any
 // global.document = dom.window.document
 // global.navigator = dom.window.navigator
 
-async function isAdminAuthenticated (req: Request) {
-  // Bypass if there is an unexpired admin token
-  if (req.get('token')) {
-    const user = await Admin.findOne({ uid: req.get('username'), token: req.get('token') }).exec();
-    if (!user) {
-      return false;
-    } else if (user.exp < new Date()){
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
-
 const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/secure/upload_signal', async (req: Request, res: Response) => {
-  if (!isAdminAuthenticated(req)) {
-    res.status(401).send("not authenticated");
-    return;
-  }
+router.post('/secure/upload_signal', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   try {
     if (!Array.isArray(req.body)) {
         const reqData:ISignal = req.body
@@ -52,11 +35,7 @@ router.post('/secure/upload_signal', async (req: Request, res: Response) => {
 })
 
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/secure/upload_measurement', async (req: Request, res: Response) => {
-  if (!isAdminAuthenticated(req)) {
-    res.status(401).send("not authenticated");
-    return;
-  }
+router.post('/secure/upload_measurement', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   try {
     if (!Array.isArray(req.body)) {
         const reqData:IMeasurement = req.body
