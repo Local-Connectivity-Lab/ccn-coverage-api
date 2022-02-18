@@ -79,7 +79,7 @@ router.post("/secure/login",
   }
 );
 
-router.get('/logout', (req: Request, res: Response) => {
+router.get('/api/logout', (req: Request, res: Response) => {
   req.logout();
   res.status(200).send('logged out');
 });
