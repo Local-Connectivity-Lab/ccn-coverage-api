@@ -62,18 +62,18 @@ const router = express.Router();
 
 export { router as ldapRouter }
 
-router.get('/success', (req: Request, res: Response) => {
+router.get('/api/success', (req: Request, res: Response) => {
   res.status(200).send('success')
   return;
 });
 
-router.get('/failure', (req: Request, res: Response) => {
+router.get('/api/failure', (req: Request, res: Response) => {
   res.status(500).send('failure')
   return;
 });
 
 router.post("/secure/login",
-  passport.authenticate('ldap', { failureRedirect: '/failure', successRedirect: "/success" }),
+  passport.authenticate('ldap', { failureRedirect: '/api/failure', successRedirect: "/api/success" }),
   (req: Request, res: Response) => {
     res.status(200).send('success');
   }
