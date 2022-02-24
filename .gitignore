@@ -16,6 +16,7 @@ api-keys.ts
 .key
 api-pub
 api-secret
+/models/sites.json
 
 # production
 /build
