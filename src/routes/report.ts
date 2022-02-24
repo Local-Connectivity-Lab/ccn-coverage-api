@@ -9,7 +9,7 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
   const hpkr = Buffer.from(req.body.h_pkr, 'hex');
   const signature = Buffer.from(req.body.sigma_m, 'hex');
   const message = Buffer.from(req.body.M, 'hex');
-  User.findOne({ identity: req.body.h_pkr }, (err: any, user: any) => {
+  User.findOne({ identity: req.body.h_pkr.toLowerCase() }, (err: any, user: any) => {
     if (err || !user) {
       res.status(401).send('user not found')
       return false;
