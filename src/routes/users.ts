@@ -12,7 +12,7 @@ const expDisplayLimitMin = 30000;
 
 // Get users
 // Need an admin token for this API
-router.post('/secure/get-users', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
+router.post('/secure/get-users', connectEnsureLogin.ensureLoggedIn('/api/failure'), async (req: Request, res: Response) => {
   const registered = await User.find({ registered: true }).sort('-issueDate').exec();
   const exp = date.addMinutes(new Date(), -expDisplayLimitMin);
   const pending = await User.find({ registered: false, issueDate: { $gte: exp} }).sort('-issueDate').exec();
@@ -22,7 +22,7 @@ router.post('/secure/get-users', connectEnsureLogin.ensureLoggedIn(), async (req
   })
 });
 
-router.post('/secure/toggle-users', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
+router.post('/secure/toggle-users', connectEnsureLogin.ensureLoggedIn('/api/failure'), async (req: Request, res: Response) => {
   if (!req.body.identity || !req.body.enabled) {
     res.status(400).send('invalid parameters')
     return;
