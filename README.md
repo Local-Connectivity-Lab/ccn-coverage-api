@@ -1,5 +1,6 @@
 # ccn-coverage-api
 An API to receive POST data from Android phones and providing GET data for the measurement visualization.
+### CAUTION: EXTREMELY OUTDATED
 ## Usage
 ### POST `api/register`
 Verify and register the user to the server and distribute to the EPCs
