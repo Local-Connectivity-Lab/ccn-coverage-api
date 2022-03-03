@@ -1,1 +1,83 @@
-"[{\"name\":\"ICTD Lab Testbed\",\"latitude\":47.652906,\"longitude\":-122.304988,\"status\":\"active\",\"address\":\"3800 E Stevens Way NE, Rm 384, Seattle WA 98195\",\"cell_id\":[\"67942156\",\"138403898\"]},{\"name\":\"SURGEtacoma\",\"latitude\":47.23854,\"longitude\":-122.44094,\"status\":\"active\",\"address\":\"2367 Tacoma Ave S, Tacoma, WA 98402\",\"cell_id\":[\"67942289\"]},{\"name\":\"Filipino Community Center\",\"latitude\":47.5501,\"longitude\":-122.2872,\"status\":\"active\",\"address\":\"5740 Martin Luther King Jr Way S, Seattle, WA 98118\",\"cell_id\":[\"67942188\",\"138181622\"]},{\"name\":\"Oareao OCC Masjid\",\"latitude\":47.52391,\"longitude\":-122.27636,\"status\":\"active\",\"address\":\"8812 Renton Ave S, Seattle, WA 98118\",\"cell_id\":[]},{\"name\":\"Franklin High School\",\"latitude\":47.576,\"longitude\":-122.29307,\"status\":\"active\",\"address\":\"3013 S Mt Baker Blvd, Seattle, WA 98144\",\"cell_id\":[\"67942183\"]},{\"name\":\"Garfield High School\",\"latitude\":47.60533,\"longitude\":-122.3018,\"status\":\"active\",\"address\":\"400 23rd Ave, Seattle, WA 98122\",\"cell_id\":[\"67942220\"]},{\"name\":\"Skyway Library\",\"latitude\":47.49049,\"longitude\":-122.23853,\"status\":\"active\",\"address\":\"12601 76th Ave S, Seattle, WA 98178\",\"cell_id\":[\"67942274\"]},{\"name\":\"Testing Site\",\"latitude\":47.4,\"longitude\":-122.24,\"status\":\"in-conversation\",\"address\":\"TEST\",\"cell_id\":[\"12345678\",\"9382649\"]}]"
+[
+  {
+    "name": "ICTD Lab Testbed",
+    "latitude": 47.652906,
+    "longitude": -122.304988,
+    "status": "active",
+    "address": "3800 E Stevens Way NE, Rm 384, Seattle WA 98195",
+    "cell_id": [
+      "67942156",
+      "138403898"
+    ]
+  },
+  {
+    "name": "SURGEtacoma",
+    "latitude": 47.23854,
+    "longitude": -122.44094,
+    "status": "active",
+    "address": "2367 Tacoma Ave S, Tacoma, WA 98402",
+    "cell_id": [
+      "67942289"
+    ]
+  },
+  {
+    "name": "Filipino Community Center",
+    "latitude": 47.5501,
+    "longitude": -122.2872,
+    "status": "active",
+    "address": "5740 Martin Luther King Jr Way S, Seattle, WA 98118",
+    "cell_id": [
+      "67942188",
+      "138181622"
+    ]
+  },
+  {
+    "name": "Oareao OCC Masjid",
+    "latitude": 47.52391,
+    "longitude": -122.27636,
+    "status": "active",
+    "address": "8812 Renton Ave S, Seattle, WA 98118",
+    "cell_id": []
+  },
+  {
+    "name": "Franklin High School",
+    "latitude": 47.576,
+    "longitude": -122.29307,
+    "status": "active",
+    "address": "3013 S Mt Baker Blvd, Seattle, WA 98144",
+    "cell_id": [
+      "67942183"
+    ]
+  },
+  {
+    "name": "Garfield High School",
+    "latitude": 47.60533,
+    "longitude": -122.3018,
+    "status": "active",
+    "address": "400 23rd Ave, Seattle, WA 98122",
+    "cell_id": [
+      "67942220"
+    ]
+  },
+  {
+    "name": "Skyway Library",
+    "latitude": 47.49049,
+    "longitude": -122.23853,
+    "status": "active",
+    "address": "12601 76th Ave S, Seattle, WA 98178",
+    "cell_id": [
+      "67942274"
+    ]
+  },
+  {
+    "name": "Testing Site",
+    "latitude": 47.4,
+    "longitude": -122.24,
+    "status": "in-conversation",
+    "address": "TEST",
+    "cell_id": [
+      "12345678",
+      "9382649"
+    ]
+  }
+]
