@@ -1,4 +1,4 @@
-const CONFIG = require('../config.ts');
+const CONFIG = require('./config.ts');
 import express from 'express'
 import mongoose from 'mongoose'
 import passport from 'passport'
