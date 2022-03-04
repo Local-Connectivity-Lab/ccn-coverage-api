@@ -45,16 +45,16 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn(), async (r
     
     removeManualMeasurement();
     SignalData.insertMany(data).then(()=> {
+      MeasurementData.insertMany(data).then(()=> {
+        res.status(201).send('successful');
+      }).catch((err: any) => {
+        res.status(503).send(err);
+        return;
+      })
     }).catch((err: any) => {
       res.status(503).send(err);
       return;
     })
-    MeasurementData.insertMany(data).then(()=> {
-    }).catch((err: any) => {
-      res.status(503).send(err);
-      return;
-    })
-    res.status(201).send('successful');
   } catch(error) {
     console.error(error)
     return res.status(500).send("Incorrect Format or Database Error")
