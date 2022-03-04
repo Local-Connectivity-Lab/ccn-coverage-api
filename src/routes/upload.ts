@@ -43,7 +43,7 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn(), async (r
       row.dbm = dbms.reduce((a: number, b: number) => a + b / dbms.length, 0);
     });
     
-    removeManualMeasurement();
+    await removeManualMeasurement();
     SignalData.insertMany(data).then(()=> {
       MeasurementData.insertMany(data).then(()=> {
         res.status(201).send('successful');
