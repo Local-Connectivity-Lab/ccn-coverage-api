@@ -11,7 +11,6 @@ import { ldapRouter } from './routes/ldap-login'
 import { newUserRouter } from './routes/new-user'
 import { usersRouter } from './routes/users'
 import { editSitesRouter } from './routes/edit-sites'
-import cors from 'cors';
 
 // Change this line to match your mongodb server
 // TODO: Work with ENV
@@ -21,24 +20,7 @@ const mongodbURI = 'mongodb://localhost:27017/api-data'
 const listeningPort = 3000
 
 const app = express()
-const options: cors.CorsOptions = {
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'X-Access-Token',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Credentials',
-  ],
-  credentials: true,
-  methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-  origin: ['http://localhost:3002'],
-  preflightContinue: false,
-};
 
-app.use(cors(options));
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header(
@@ -58,7 +40,6 @@ var sessionMiddleWare = cookieSession({
 app.use(json({ limit: '2mb' }));
 app.use(urlencoded({ extended: true }));
 app.use(raw({type: 'application/octet-stream', limit : '2mb'}))
-app.use(passport.initialize());
 
 
 // The order of the following middleware is very important for passport!!

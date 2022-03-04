@@ -62,6 +62,7 @@ router.get('/api/dataRange', (_, res) => {
 });
 
 router.get('/api/data', async (req, res) => {
+  console.log('wtf');
   try {
     const width = Number.parseInt(req.query.width + '');
     const height = Number.parseInt(req.query.height + '');
@@ -77,7 +78,6 @@ router.get('/api/data', async (req, res) => {
     const bins = new Array<number[]>(
       (width * height) >> (2 * binSizeShift),
     );
-
     const map = L.map(dom.window.document.createElement('div')).setView(
       dataRange.center,
       zoom,

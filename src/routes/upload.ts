@@ -1,10 +1,11 @@
 import express, {Request, Response} from 'express'
-import * as Crypto from "crypto"
 
 import { ISignal, SignalData } from '../../models/signal'
 import { Admin, IAdmin } from '../../models/admins'
 import { IMeasurement, MeasurementData } from '../../models/measurement'
 import connectEnsureLogin from 'connect-ensure-login';
+import { reduceEachTrailingCommentRange } from 'typescript'
+const CSV = require('csv-string');
 
 // const dom = new JSDOM('')
 // global.window = dom.window as any
@@ -12,47 +13,51 @@ import connectEnsureLogin from 'connect-ensure-login';
 // global.navigator = dom.window.navigator
 
 const router = express.Router();
-// TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/secure/upload_signal', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
-  try {
-    if (!Array.isArray(req.body)) {
-        const reqData:ISignal = req.body
-        const data = SignalData.build(reqData)
-        await data.save()
-        return res.status(201).send(data)
-    } else {
-      const reqData:ISignal[] = req.body
-      for (let i = 0; i < reqData.length; i++) {
-        const data = SignalData.build(reqData[i])
-        await data.save()
-      }
-      return res.status(201).send("Successful")
-    }
-  } catch(error) {
-    console.error(error)
-    return res.status(500).send("Database Error")
-  }
-})
+// TODO: Improve parsing performance, return different responses
+const manual = [
+  'LGG8',
+  'CPEL',
+  'CPEH',
+  'Pixel4'
+]
 
-// TODO: Check if the user is actually online (calling EPCs is_online/status)
-router.post('/secure/upload_measurement', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
+async function removeManualMeasurement() {
+  await SignalData.find({ device_id: manual }).deleteMany().exec();
+  await MeasurementData.find({ device_id: manual }).deleteMany().exec();
+}
+router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   try {
-    if (!Array.isArray(req.body)) {
-        const reqData:IMeasurement = req.body
-        const data = MeasurementData.build(reqData)
-        await data.save()
-        return res.status(201).send(data)
-    } else {
-      const reqData:IMeasurement[] = req.body
-      for (let i = 0; i < reqData.length; i++) {
-        const data = MeasurementData.build(reqData[i])
-        await data.save()
-      }
-      return res.status(201).send("Successful")
+    console.log(req.body.csv)
+    if (!req.body || !req.body.csv) {
+      return res.status(400).send("Bad request")
     }
+    const data = CSV.parse(req.body.csv, { output: 'objects' });
+
+    data.forEach((row: any) => {
+      row.latitude = Number(row.coordinate.split(',')[0]);
+      row.longitude = Number(row.coordinate.split(',')[1]);
+      row.level_code = -1;
+      row.cell_id = row.cell_id.split('-')[1];
+      row.timestamp = Date.parse(row.date + 'T' + row.time);
+      const dbms = row.dbm.split(',').map((x: string) => {return parseInt(x)})
+      row.dbm = dbms.reduce((a: number, b: number) => a + b / dbms.length, 0);
+    });
+    
+    removeManualMeasurement();
+    SignalData.insertMany(data).then(()=> {
+    }).catch((err: any) => {
+      res.status(503).send(err);
+      return;
+    })
+    MeasurementData.insertMany(data).then(()=> {
+    }).catch((err: any) => {
+      res.status(503).send(err);
+      return;
+    })
+    res.status(201).send('successful');
   } catch(error) {
     console.error(error)
-    return res.status(500).send("Database Error")
+    return res.status(500).send("Incorrect Format or Database Error")
   }
 })
 
