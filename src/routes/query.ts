@@ -62,7 +62,6 @@ router.get('/api/dataRange', (_, res) => {
 });
 
 router.get('/api/data', async (req, res) => {
-  console.log('wtf');
   try {
     const width = Number.parseInt(req.query.width + '');
     const height = Number.parseInt(req.query.height + '');
@@ -111,12 +110,12 @@ router.get('/api/data', async (req, res) => {
       }
     }
     let result = [];
+    let i = 0;
     for (let bin of bins) {
-      if (bin == undefined) {
-        result.push(null)
-      } else {
-        result.push(average(bin));
+      if (bin != undefined) {
+        result.push([i, average(bin)]);
       }
+      i++;
     }
     res.send(result);
   } catch (error) {
