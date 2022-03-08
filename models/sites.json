@@ -37,7 +37,9 @@
     "longitude": -122.27636,
     "status": "active",
     "address": "8812 Renton Ave S, Seattle, WA 98118",
-    "cell_id": []
+    "cell_id": [
+      "67942157"
+    ]
   },
   {
     "name": "Franklin High School",
