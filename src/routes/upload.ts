@@ -9,17 +9,17 @@ const CSV = require('csv-string');
 
 const router = express.Router();
 
-// const manual = [
-//   'LGG8',
-//   'CPEL',
-//   'CPEH',
-//   'Pixel4'
-// ]
+const manual = [
+  'LGG8',
+  'CPEL',
+  'CPEH',
+  'Pixel4'
+]
 
-// async function removeManualMeasurement() {
-//   await SignalData.find({ device_id: manual }).deleteMany().exec();
-//   await MeasurementData.find({ device_id: manual }).deleteMany().exec();
-// }
+async function removeManualMeasurement() {
+  await SignalData.find({ device_id: manual }).deleteMany().exec();
+  await MeasurementData.find({ device_id: manual }).deleteMany().exec();
+}
 
 async function removeGroupMeasurement(group: string) {
   await SignalData.find({ group: group }).deleteMany().exec();
@@ -41,6 +41,16 @@ router.post('/secure/get_groups', connectEnsureLogin.ensureLoggedIn('/api/failur
 router.post('/secure/delete_group', connectEnsureLogin.ensureLoggedIn('/api/failure'), async (req: Request, res: Response) => {
   try {
     await removeGroupMeasurement(req.body.group);
+    return res.status(200).send('successfully deleted');
+  } catch(error) {
+    console.error(error);
+    return res.status(500).send('database error');
+  }
+});
+
+router.post('/secure/delete_manual', connectEnsureLogin.ensureLoggedIn('/api/failure'), async (req: Request, res: Response) => {
+  try {
+    await removeManualMeasurement();
     return res.status(200).send('successfully deleted');
   } catch(error) {
     console.error(error);
