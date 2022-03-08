@@ -78,6 +78,7 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
       }
     });
     
+<<<<<<< HEAD
     await removeGroupMeasurement(req.body.group);
     SignalData.insertMany(data, {
       ordered: false
@@ -85,6 +86,11 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
       MeasurementData.insertMany(data, {
         ordered: false
       }).then(()=> {
+=======
+    await removeManualMeasurement();
+    SignalData.insertMany(data).then(()=> {
+      MeasurementData.insertMany(data).then(()=> {
+>>>>>>> 22f9dbbcc5b66e2a818cb0b600915e62eae29318
         res.status(201).send('successful');
       }).catch((err: any) => {
         res.status(503).send(err);
