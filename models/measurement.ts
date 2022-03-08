@@ -9,6 +9,7 @@ interface IMeasurement {
   ping: number
   cell_id: string
   device_id: string
+  group?: string
 }
 
 interface MeasurementModelInterface extends mongoose.Model<MeasurementDoc> {
@@ -25,6 +26,7 @@ interface MeasurementDoc extends mongoose.Document {
   ping: number
   cell_id: string
   device_id: string
+  group?: string
 }
 
 const measurementSchema = new mongoose.Schema({
@@ -36,6 +38,7 @@ const measurementSchema = new mongoose.Schema({
   ping:                   { type: Number, required: true },
   cell_id:                { type: String, required: true },
   device_id:              { type: String, required: true },
+  group:              { type: String, required: false },
 }, {
   versionKey: false
 })

@@ -68,7 +68,7 @@ router.get('/api/success', (req: Request, res: Response) => {
 });
 
 router.get('/api/failure', (req: Request, res: Response) => {
-  res.status(500).send('failure')
+  res.status(500).send('Unauthorized, please login')
   return;
 });
 
