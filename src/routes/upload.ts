@@ -89,21 +89,18 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
     });
     
     await removeGroupMeasurement(req.body.group);
-    SignalData.insertMany(data, {
+    const signalPromise = SignalData.insertMany(data, {
       ordered: false
-    }).then(()=> {
-      MeasurementData.insertMany(data, {
-        ordered: false
-      }).then(()=> {
-        res.status(201).send('successful');
-      }).catch((err: any) => {
-        res.status(503).send(err);
-        return;
-      })
-    }).catch((err: any) => {
-      res.status(503).send(err);
+    });
+    const MeasurementPromise = MeasurementData.insertMany(data, {
+      ordered: false
+    });
+    Promise.all([signalPromise, MeasurementPromise]).then((values) => {
+      return res.status(201).send('successful');
+    }).catch((errs) => {
+      res.status(503).send(errs[0] + ', ' + errs[1]);
       return;
-    })
+    });
   } catch(error) {
     console.error(error)
     return res.status(500).send("Incorrect Format or Database Error")
