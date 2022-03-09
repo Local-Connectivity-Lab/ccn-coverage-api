@@ -1,5 +1,5 @@
 import express, {Request, Response} from 'express'
-
+import * as Crypto from "crypto"
 import { ISignal, SignalData } from '../../models/signal'
 import { Admin, IAdmin } from '../../models/admins'
 import { IMeasurement, MeasurementData } from '../../models/measurement'
@@ -86,6 +86,7 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
       if (req.body.group != '') {
         row.group = req.body.group;
       }
+      row.mid = Crypto.randomBytes(16).toString('hex')
     });
     
     await removeGroupMeasurement(req.body.group);

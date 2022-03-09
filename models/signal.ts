@@ -9,6 +9,7 @@ interface ISignal {
   cell_id: number
   device_id: string
   group?: string
+  mid?: string
 }
 
 interface SignalModelInterface extends mongoose.Model<SignalDoc> {
@@ -24,6 +25,7 @@ interface SignalDoc extends mongoose.Document {
   cell_id: string
   device_id: string
   group?: string
+  mid?: string
 }
 
 const signalSchema = new mongoose.Schema({
@@ -35,6 +37,7 @@ const signalSchema = new mongoose.Schema({
   cell_id:    { type: String, required: true },
   device_id:  { type: String, required: true },
   group:  { type: String, required: false },
+  mid:  { type: String, required: false },
 }, {
   versionKey: false
 })

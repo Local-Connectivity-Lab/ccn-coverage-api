@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express'
 import { JSDOM } from 'jsdom';
-import { ISignal, SignalData } from '../../models/signal'
-import { IMeasurement, MeasurementData } from '../../models/measurement'
+import { ISignal, SignalData, SignalDoc } from '../../models/signal'
+import { IMeasurement, MeasurementData, MeasurementDoc } from '../../models/measurement'
 import fs from 'fs';
 import getDataRange from '../utils/get-data-range';
 import isMapType from '../utils/is-map-type';
@@ -286,8 +286,51 @@ router.get('/api/lineSummary', (req, res) => {
   }
 });
 
-function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string) {
-  const findObj:any = {}
+router.get('/api/markers', (req, res) => {
+  try {
+    const selectedSites = req.query.sites + '';
+    const selectedDevices = req.query.devices + '';
+    const timeFrom = req.query.from + '';
+    const timeTo = req.query.to + '';
+    const findObj = getFindObj(timeFrom, timeTo, selectedSites, selectedDevices);
+    const signalPromise =  SignalData.find(findObj).exec();
+    const measurementPromise =  MeasurementData.find(findObj).exec();
+    Promise.all([signalPromise, measurementPromise]).then((values) => {
+      const signal: SignalDoc[] = values[0];
+      const measurement: MeasurementDoc[] = values[1];
+      const lookup = new Map<string, number>();
+      const data: any = [];
+      signal.forEach((row: SignalDoc) => {
+        if (row.mid) {
+          lookup.set(row.mid, row.dbm);
+        }
+      }) 
+      measurement.forEach((row: MeasurementDoc) => {
+        if (row.mid) {
+          data.push({
+            latitude: row.latitude,
+            longitude: row.longitude,
+            device_id: row.device_id,
+            site: siteNameDict[row.cell_id],
+            dbm: lookup.get(row.mid),
+            upload_speed: row.upload_speed,
+            download_speed: row.download_speed,
+            ping: row.ping,
+            mid: row.mid
+          })
+        }
+      })
+      console.log(findObj);
+      return res.send(data);
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error);
+  }
+});
+
+function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string, selectedDevices?: string) {
+  const findObj: any = {}
   let cellList: string[] = []
   if (selectedSites != undefined && selectedSites != 'undefined') {
     for (let site of selectedSites.split(',')) {
@@ -309,6 +352,18 @@ function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string) 
   }
   if (timeFrom != 'undefined') {
     findObj['timestamp']['$gte'] = timeFrom;
+  }
+  let deviceList: string[] = [];
+  if (selectedDevices != undefined && selectedDevices != 'undefined') {
+    if (selectedDevices === '') {
+      findObj['device_id'] = {
+        $in: ''
+      };
+    } else {
+      findObj['device_id'] = {
+        $in: selectedDevices.split(',')
+      };
+    }
   }
   return findObj;
 }
