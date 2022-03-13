@@ -88,7 +88,6 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
       row.upload_speed = splitAvg(row.upload_speed);
       row.download_speed = splitAvg(row.download_speed);
       row.ping = splitAvg(row.ping);
-      const dbms = row.dbm.split(',').map((x: string) => {return parseFloat(x)})
       // Set group if any
       if (req.body.group != '') {
         row.group = req.body.group;
