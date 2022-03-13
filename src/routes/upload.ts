@@ -82,7 +82,7 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
       // Get average of dbm values
       const splitAvg = (arr:any ) => {
         const tmp = arr.split(',').map((x: string) => {return parseFloat(x)});
-        return tmp.reduce((a: number, b: number) => a + b / dbms.length, 0);
+        return tmp.reduce((a: number, b: number) => a + b / tmp.length, 0);
       }
       row.dbm = splitAvg(row.dbm);
       row.upload_speed = splitAvg(row.upload_speed);
