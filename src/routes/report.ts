@@ -35,7 +35,10 @@ const reportSignal = (req: Request, res: Response) => {
     const decoder = new TextDecoder();
     const serializedContents = decoder.decode(M);
     const signal:ISignal = JSON.parse(serializedContents);
-    const data = SignalData.build(signal)
+    if (req.body.show_data && req.body.show_data === true) {
+      signal.show_data = true;
+    }
+    const data = SignalData.build(signal);
     data.save().then(() => {
       return res.status(201).send('successful')
     })
@@ -52,6 +55,9 @@ const reportMeasurement = (req: Request, res: Response) => {
     const serializedContents = decoder.decode(M);
     const signal:IMeasurement = JSON.parse(serializedContents);
     const data = MeasurementData.build(signal)
+    if (req.body.show_data && req.body.show_data === true) {
+      signal.show_data = true;
+    }
     data.save().then(() => {
       return res.status(201).send('successful')
     })

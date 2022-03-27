@@ -10,6 +10,7 @@ interface ISignal {
   device_id: string
   group?: string
   mid?: string
+  show_data?: boolean
 }
 
 interface SignalModelInterface extends mongoose.Model<SignalDoc> {
@@ -26,6 +27,7 @@ interface SignalDoc extends mongoose.Document {
   device_id: string
   group?: string
   mid?: string
+  show_data?: boolean
 }
 
 const signalSchema = new mongoose.Schema({
@@ -38,6 +40,7 @@ const signalSchema = new mongoose.Schema({
   device_id:  { type: String, required: true },
   group:  { type: String, required: false },
   mid:  { type: String, required: false },
+  show_data:  { type: Boolean, required: false },
 }, {
   versionKey: false
 })
