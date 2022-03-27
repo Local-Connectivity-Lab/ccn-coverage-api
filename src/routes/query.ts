@@ -76,6 +76,7 @@ router.get('/api/data', (req, res) => {
     const timeFrom = req.query.from + '';
     const timeTo = req.query.to + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
+    findObj['show_data'] = true;
     const map = L.map(dom.window.document.createElement('div')).setView(
       dataRange.center,
       zoom,

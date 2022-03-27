@@ -93,6 +93,8 @@ router.post('/secure/upload_data', connectEnsureLogin.ensureLoggedIn('/api/failu
         row.group = req.body.group;
       }
       row.mid = Crypto.randomBytes(16).toString('hex')
+      // Set show_data = true
+      row.show_data = true;
     });
     
     await removeGroupMeasurement(req.body.group);
