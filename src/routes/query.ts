@@ -295,6 +295,7 @@ router.get('/api/markers', (req, res) => {
     const timeFrom = req.query.from + '';
     const timeTo = req.query.to + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites, selectedDevices);
+    findObj['show_data'] = true;
     const signalPromise =  SignalData.find(findObj).exec();
     const measurementPromise =  MeasurementData.find(findObj).exec();
     Promise.all([signalPromise, measurementPromise]).then((values) => {
