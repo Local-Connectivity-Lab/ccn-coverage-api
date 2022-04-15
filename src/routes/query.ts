@@ -369,11 +369,11 @@ function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string, 
   let deviceList: string[] = [];
   if (selectedDevices != undefined && selectedDevices != 'undefined') {
     if (selectedDevices === '') {
-      findObj['device_id'] = {
+      findObj['device_type'] = {
         $in: ''
       };
     } else {
-      findObj['device_id'] = {
+      findObj['device_type'] = {
         $in: selectedDevices.split(',')
       };
     }

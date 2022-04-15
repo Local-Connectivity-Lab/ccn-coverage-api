@@ -38,6 +38,7 @@ const reportSignal = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
+    signal.device_type = 'Android'
     const data = SignalData.build(signal);
     data.save().then(() => {
       return res.status(201).send('successful')
@@ -57,6 +58,7 @@ const reportMeasurement = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
+    signal.device_type = 'Android'
     const data = MeasurementData.build(signal)
     data.save().then(() => {
       return res.status(201).send('successful')
