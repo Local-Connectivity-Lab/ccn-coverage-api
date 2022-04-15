@@ -319,6 +319,17 @@ router.get('/api/markers', (req, res) => {
             ping: row.ping,
             mid: row.mid
           })
+        } else {
+          data.push({
+            latitude: row.latitude,
+            longitude: row.longitude,
+            device_id: row.device_id,
+            site: siteNameDict[row.cell_id],
+            upload_speed: row.upload_speed,
+            download_speed: row.download_speed,
+            ping: row.ping,
+            mid: row.mid
+          })
         }
       })
       console.log(findObj);
