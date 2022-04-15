@@ -1,4 +1,5 @@
 import express, {Request, Response} from 'express'
+import * as Crypto from "crypto"
 import { JSDOM } from 'jsdom';
 import { ISignal, SignalData, SignalDoc } from '../../models/signal'
 import { IMeasurement, MeasurementData, MeasurementDoc } from '../../models/measurement'
@@ -328,11 +329,11 @@ router.get('/api/markers', (req, res) => {
             upload_speed: row.upload_speed,
             download_speed: row.download_speed,
             ping: row.ping,
-            mid: row.mid
+            mid: Crypto.randomBytes(16).toString('hex')
           })
         }
       })
-      console.log(findObj);
+      console.log(data);
       return res.send(data);
     })
   } catch (error) {
