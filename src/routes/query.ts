@@ -74,8 +74,8 @@ router.get('/api/data', (req, res) => {
     const zoom = Number.parseInt(req.query.zoom + '');
     const selectedSites = req.query.selectedSites + '';
     const mapType = req.query.mapType + '';
-    const timeFrom = req.query.from + '';
-    const timeTo = req.query.to + '';
+    const timeFrom = req.query.timeFrom + '';
+    const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     findObj['show_data'] = true;
     const map = L.map(dom.window.document.createElement('div')).setView(
@@ -149,8 +149,8 @@ router.get('/api/data', (req, res) => {
 
 router.get('/api/sitesSummary', (req, res) => {
   try {
-    const timeFrom = req.query.from + '';
-    const timeTo = req.query.to + '';
+    const timeFrom = req.query.timeFrom + '';
+    const timeTo = req.query.timeTo + '';
     let output:any = {};
     let measurementNum:any = {};
     let signalNum:any = {};
@@ -209,8 +209,8 @@ router.get('/api/lineSummary', (req, res) => {
   try {
     const mapType = req.query.mapType + '';
     const selectedSites = req.query.selectedSites + ''
-    const timeFrom = req.query.from + '';
-    const timeTo = req.query.to + '';
+    const timeFrom = req.query.timeFrom + '';
+    const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     // Send nothing if no sites
     let agg:any = {};
@@ -292,8 +292,8 @@ router.get('/api/markers', (req, res) => {
   try {
     const selectedSites = req.query.sites + '';
     const selectedDevices = req.query.devices + '';
-    const timeFrom = req.query.from + '';
-    const timeTo = req.query.to + '';
+    const timeFrom = req.query.timeFrom + '';
+    const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites, selectedDevices);
     findObj['show_data'] = true;
     const signalPromise =  SignalData.find(findObj).exec();
@@ -334,7 +334,7 @@ router.get('/api/markers', (req, res) => {
           })
         }
       })
-      console.log(data);
+      // console.log(data);
       return res.send(data);
     })
   } catch (error) {
@@ -358,15 +358,15 @@ function getFindObj(timeFrom?: string, timeTo?: string, selectedSites?: string, 
       }
     }
   }
-  if (timeFrom != 'undefined' || timeTo != 'undefined') {
+  if (timeFrom !== 'undefined' || timeTo !== 'undefined') {
     findObj['timestamp'] = {};
   }
-  if (timeTo != 'undefined') {
+  if (timeTo !== 'undefined') {
     findObj['timestamp']['$lt'] = timeTo;
   }
-  if (timeFrom != 'undefined') {
+  if (timeFrom !== 'undefined') {
     findObj['timestamp']['$gte'] = timeFrom;
-  }
+  }   
   let deviceList: string[] = [];
   if (selectedDevices != undefined && selectedDevices != 'undefined') {
     if (selectedDevices === '') {
