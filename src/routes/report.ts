@@ -63,7 +63,6 @@ const reportMeasurement = (req: Request, res: Response) => {
     data.save().then(() => {
       return res.status(201).send('successful')
     })
-    return res.status(201).send('successful')
   } catch(error) {
     console.error(error)
     return res.status(500).send('database Error')
