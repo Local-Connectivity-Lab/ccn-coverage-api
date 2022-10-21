@@ -35,9 +35,7 @@ type Site = {
 const average = (numbers: number[]) => sum(numbers) / numbers.length;
 const sum = (numbers: number[]) => numbers.reduce((total, aNumber) => total + aNumber, 0);
 
-var sites: Site[] = JSON.parse(
-  fs.readFileSync('models/sites.json').toString(),
-);
+var sites: Site[] = updateSite();
 
 const cellIdDict: { [name: string]: string[] } = {}
 const siteNameDict: { [name: string]: string } = {}
@@ -51,12 +49,25 @@ for (let site of sites) {
 }
 
 // Prepare data ranges
+console
 const dataRange = getDataRange(sites);
 
+function updateSite() {
+  if (fs.existsSync('models/sites.json')) {
+    return JSON.parse(
+      fs.readFileSync('models/sites.json').toString(),
+    );
+  } else {
+    fs.copyFile('models/sites-default.json', 'models/sites.json', (res) => {
+      console.log('update sites from default');
+    });
+    return JSON.parse(
+      fs.readFileSync('models/sites-default.json').toString(),
+    );
+  }
+}
 router.get('/api/sites', (_, res: Response) => {
-  sites = JSON.parse(
-    fs.readFileSync('models/sites.json').toString(),
-  );
+  updateSite();
   res.send(sites);
 });
 
