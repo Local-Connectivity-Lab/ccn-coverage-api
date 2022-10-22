@@ -1,12 +1,16 @@
 # ccn-coverage-api
 An API to receive POST data from Android phones and providing GET data for the measurement visualization.
 ## TODO
+-  Add bypass to the API keys when running locally
 -  Better compatiblity with local development environment e.g. Database connection
 -  Lacks of documentation
 
 ## Optional
 -  Make Typescript more strict
 -  Unify Mongoose/Mongodb library with the front-end
+## Installation
+-  Generate API keys and put it in `keys/api-pub` and `keys/api-secret`, used it for signing/validating the keys from Android's measurement app
+
 ### CAUTION: EXTREMELY OUTDATED
 ## Usage
 ### POST `api/register`
