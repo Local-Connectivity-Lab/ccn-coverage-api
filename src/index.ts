@@ -57,8 +57,8 @@ app.use(editSitesRouter)
 
 
 mongoose.connect(CONFIG.mongodbURI,
-() => {
-  console.log('connected to database')
+(...args) => {
+  console.log('result of attempting to connect to mongo:', args)
 })
 
 app.listen(listeningPort, () => {
