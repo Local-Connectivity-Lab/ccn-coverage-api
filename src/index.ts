@@ -1,4 +1,4 @@
-const CONFIG = require('./config.ts');
+import CONFIG from './config';
 import express from 'express'
 import mongoose from 'mongoose'
 import passport from 'passport'
@@ -57,8 +57,8 @@ app.use(editSitesRouter)
 
 
 mongoose.connect(CONFIG.mongodbURI,
-() => {
-  console.log('connected to database')
+(...cxnResult) => {
+  console.log('Mongo connection result:', cxnResult)
 })
 
 app.listen(listeningPort, () => {

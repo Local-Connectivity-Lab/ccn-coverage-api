@@ -1,4 +1,4 @@
-const CONFIG = require('../config.ts');
+import CONFIG from '../config';
 import express, { Request, Response, NextFunction } from 'express'
 import passport from 'passport'
 import { Admin, IAdmin, IExpressUser } from '../../models/admins'
