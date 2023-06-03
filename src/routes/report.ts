@@ -28,7 +28,6 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
   });
 }
 
-const router = express.Router();
 const reportSignal = (req: Request, res: Response) => {
   try {
     const M = new Uint8Array(Buffer.from(req.body.M, 'hex'));
@@ -38,14 +37,18 @@ const reportSignal = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
-    signal.device_type = 'Android'
+    signal.device_type = 'Android';
     const data = SignalData.build(signal);
-    data.save().then(() => {
-      return res.status(201).send('successful')
-    })
+    data.save()
+      .then(() => {
+        res.status(201).send('successful');
+      })
+      .catch((e) => {
+        res.status(500).send(e);
+      });
   } catch(error) {
-    console.error(error)
-    return res.status(500).send('database Error')
+    console.error(error);
+    res.status(500).send('database Error');
   }
 }
 
@@ -58,16 +61,22 @@ const reportMeasurement = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
-    signal.device_type = 'Android'
-    const data = MeasurementData.build(signal)
-    data.save().then(() => {
-      return res.status(201).send('successful')
-    })
+    signal.device_type = 'Android';
+    const data = MeasurementData.build(signal);
+    data.save()
+      .then(() => {
+        res.status(201).send('successful');
+      })
+      .catch((e) => {
+        res.status(500).send(e);
+      });
   } catch(error) {
-    console.error(error)
-    return res.status(500).send('database Error')
+    console.error(error);
+    res.status(500).send('database Error');
   }
 }
+
+const router = express.Router();
 
 router.post('/api/report_signal', (req: Request, res: Response) => {
   if (!req.body || !req.body.h_pkr || !req.body.sigma_m || !req.body.M) {
@@ -75,7 +84,6 @@ router.post('/api/report_signal', (req: Request, res: Response) => {
     return;
   }
   runIfAuthenticated(req, res, reportSignal);
-  
 })
 
 router.post('/api/report_measurement', (req: Request, res: Response) => {
