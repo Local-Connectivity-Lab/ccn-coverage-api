@@ -67,7 +67,7 @@ function updateSite() {
   }
 }
 router.get('/api/sites', (_, res: Response) => {
-  updateSite();
+  sites = updateSite();
   res.send(sites);
 });
 

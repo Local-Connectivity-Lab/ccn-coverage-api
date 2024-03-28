@@ -7,8 +7,10 @@ const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
 router.post('/secure/edit_sites', connectEnsureLogin.ensureLoggedIn(), async (req: Request, res: Response) => {
   try {
-    const sites = req.body.sites.replace(/(^"|"$)/g, '');
-    fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites).replace(/\\/g, ""), function(err) {
+    const sites = JSON.parse(req.body.sites);
+    fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites), function(err) {
+    // const sites = req.body.sites.replace(/(^"|"$)/g, '');
+    // fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites).replace(/\\/g, ""), function(err) {
       if (err) {
         console.error(err);
         res.status(500).send("database error");
