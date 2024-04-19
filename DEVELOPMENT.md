@@ -25,3 +25,21 @@ location /api {
         proxy_pass       http://localhost:3002;
 }
  ```
+
+## Troubleshooting Nginx Error 502 on Website
+
+If you encounter a 502 error, it's likely due to `ccn-coverage-api` and `ccn-coverage-vis` not running. You can check if the servers are running by executing `ps aux | grep node` inside the respective directories. If the server is down, this command will likely only output the grep command.
+
+If you encounter issues with `npm start` in the API, such as the build failing with error messages like `"[ERROR] 19:28:10 Error: models/signal.js: Emit skipped"`, it might be due to redundant JavaScript and TypeScript duplicate files within `ccn-coverage-api`. These duplicates can cause TypeScript to encounter type errors or inconsistencies in the JavaScript files, resulting in compilation errors during the build process.
+
+To resolve this issue, navigate to `ccn-coverage-api/tsconfig.json` and take a look:
+
+```bash
+/* JavaScript Support */
+"allowJs": true, /* Allow JavaScript files to be a part of your program. Use the `checkJs` option to get errors from these files. */
+// "checkJs": true, /* Enable error reporting in type-checked JavaScript files. */
+```
+
+We suggest either removing the redundant JavaScript files before compiling or setting the `allowJs` and `checkJs` options above to `false` to prevent build issues from occurring in the future.
+
+Once fixed, you can run `npm start &` to run the API and visualization servers in the background, allowing you to exit the servers safely.
