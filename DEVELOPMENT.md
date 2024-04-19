@@ -37,7 +37,7 @@ To resolve this issue, navigate to `ccn-coverage-api/tsconfig.json` and take a l
 ```bash
 /* JavaScript Support */
 "allowJs": true, /* Allow JavaScript files to be a part of your program. Use the `checkJs` option to get errors from these files. */
-// "checkJs": true, /* Enable error reporting in type-checked JavaScript files. */
+"checkJs": true, /* Enable error reporting in type-checked JavaScript files. */
 ```
 
 We suggest either removing the redundant JavaScript files before compiling or setting the `allowJs` and `checkJs` options above to `false` to prevent build issues from occurring in the future.
