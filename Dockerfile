@@ -1,14 +1,14 @@
-FROM node:16
+FROM node:18
 
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package*.json .
 
 RUN npm install
 
-# Bundle app source
 COPY . .
 
-EXPOSE 3001
-CMD [ "npm", "start" ]
+RUN npm run build
+
+ENTRYPOINT [ "npm", "run", "start-built" ]

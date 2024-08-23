@@ -33,6 +33,7 @@
     "node-rsa": "^1.1.1",
     "passport": "^0.5.2",
     "passport-custom": "^1.1.1",
+    "pino": "^9.3.2",
     "typescript": "^4.4.3"
   },
   "scripts": {
