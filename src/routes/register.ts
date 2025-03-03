@@ -1,11 +1,11 @@
-import express, {Request, Response} from 'express'
-import * as Crypto from "crypto"
+import express, { Request, Response } from 'express';
+import * as Crypto from 'crypto';
 import fs from 'fs';
-import { User, IUser } from '../../models/users'
-import { IRegisterRequest, AuthenticationMessage } from '../../models/register'
+import { User, IUser } from '../../models/users';
+import { IRegisterRequest, AuthenticationMessage } from '../../models/register';
 import date from 'date-and-time';
 
-const router = express.Router()
+const router = express.Router();
 
 // Need to register within n minutes after issue a QR code
 const registerTimeoutMin = 30000;
@@ -50,7 +50,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
   const pk = Crypto.createPublicKey({
     key: Buffer.from(user.publicKey, 'hex'),
     format: 'der',
-    type: 'spki'
+    type: 'spki',
   });
 
   // Verify signature
@@ -61,7 +61,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
 
   // Verify if the requet from Android matches the issued registration.
   const pkt = pk.export({ format: 'der', type: 'spki' });
-  const pktr = new Uint8Array([ ...pkt, ...r]);
+  const pktr = new Uint8Array([...pkt, ...r]);
   const hpktr = Crypto.createHash('sha256').update(pktr).digest('hex');
   if (hpktr !== hpkr) {
     res.status(403).send('outdate request, please try again');
@@ -69,16 +69,23 @@ router.post('/api/register', async (req: Request, res: Response) => {
   }
 
   // Register the user
-  User.findOneAndUpdate({identity: hsec, }, {
-    registered: true,
-    identity: hpkr,
-    isEnabled: true,
-    privateKey: ""
-  }, {upsert: true, new: true}).exec().then(()=> {
-    res.status(201).send('registered');
-  }).catch((err) => {
-    res.status(503).send('database error');
-  })
+  User.findOneAndUpdate(
+    { identity: hsec },
+    {
+      registered: true,
+      identity: hpkr,
+      isEnabled: true,
+      privateKey: '',
+    },
+    { upsert: true, new: true },
+  )
+    .exec()
+    .then(() => {
+      res.status(201).send('registered');
+    })
+    .catch(err => {
+      res.status(503).send('database error');
+    });
 });
 
-export { router as registerRouter }
+export { router as registerRouter };

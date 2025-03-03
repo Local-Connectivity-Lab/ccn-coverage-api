@@ -14,7 +14,7 @@ export default function getDataRange(data: Datum[]) {
   let minLat = data[0].latitude ?? 0;
   let maxLat = data[0].latitude ?? 0;
   let minLon = data[0].longitude ?? 0;
-  let maxLon = data[0].longitude ?? 0; 
+  let maxLon = data[0].longitude ?? 0;
   for (let x of data) {
     minLat = Math.min(minLat, x.latitude);
     maxLat = Math.max(maxLat, x.latitude);

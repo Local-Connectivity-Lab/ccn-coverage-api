@@ -10,7 +10,7 @@ location /api {
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header Host $http_host;
-                proxy_pass       http://localhost:3000;
+        proxy_pass       http://localhost:3000;
 }
         location /secure {
         proxy_set_header X-Forwarded-For $remote_addr;
