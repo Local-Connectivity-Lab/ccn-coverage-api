@@ -85,6 +85,12 @@ router.post(
 );
 
 router.get('/api/logout', (req: Request, res: Response) => {
-  req.logout();
+  req.logout(err => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('logout failed');
+      return;
+    }
+  });
   res.status(200).send('logged out');
 });

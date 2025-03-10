@@ -54,6 +54,12 @@ app.use(newUserRouter);
 app.use(usersRouter);
 app.use(editSitesRouter);
 
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('Server process terminated');
+  process.exit(0);
+});
+
 mongoose.connect(CONFIG.mongodbURI, {
   connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
@@ -62,12 +68,6 @@ mongoose.connect(CONFIG.mongodbURI, {
 }).catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1); // Exit with failure
-});
-
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  console.log('Server process terminated');
-  process.exit(0);
 });
 
 app.listen(listeningPort, () => {

@@ -29,10 +29,10 @@ router.post(
       const signalGroup = await SignalData.find().distinct('group');
       const measurementGroup = await MeasurementData.find().distinct('group');
       const groups = [...new Set([...signalGroup, ...measurementGroup])];
-      return res.status(200).send(groups);
+      res.status(200).send(groups);
     } catch (error) {
       console.error(error);
-      return res.status(500).send('database error');
+      res.status(500).send('database error');
     }
   },
 );
@@ -43,10 +43,10 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       await removeGroupMeasurement(req.body.group);
-      return res.status(200).send('successfully deleted');
+      res.status(200).send('successfully deleted');
     } catch (error) {
       console.error(error);
-      return res.status(500).send('database error');
+      res.status(500).send('database error');
     }
   },
 );
@@ -57,10 +57,10 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       await removeManualMeasurement();
-      return res.status(200).send('successfully deleted');
+      res.status(200).send('successfully deleted');
     } catch (error) {
       console.error(error);
-      return res.status(500).send('database error');
+      res.status(500).send('database error');
     }
   },
 );
@@ -73,7 +73,8 @@ router.post(
       // console.log(req.body.csv)
       // console.log(req.body.group);
       if (!req.body || !req.body.csv) {
-        return res.status(400).send('Bad request');
+        res.status(400).send('Bad request');
+        return;
       }
       const data = CSV.parse(req.body.csv, { output: 'objects' });
 
@@ -131,7 +132,7 @@ router.post(
         });
     } catch (error) {
       console.error(error);
-      return res.status(500).send('Incorrect Format or Database Error');
+      res.status(500).send('Incorrect Format or Database Error');
     }
   },
 );

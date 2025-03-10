@@ -1,21 +1,21 @@
-# Makefile for dev target to run the latest Deno container
-
 # Name of the Docker container
 DOCKER_IMAGE=node:22-slim
 
 # The current directory (mapped to the container)
 CURRENT_DIR=$(shell pwd)
 
-
+.PHONY: clean
 clean:
-	echo "Clean"
+	@echo "Clean"
+	rm -rf build
 
-assemble:
-	echo "create docker container"
-
-
+.PHONY: build
+build:
+	@echo "Create docker container"
+	docker build -t ccn-coverage-api .
 
 # The target for development
+.PHONY: dev
 dev:
 	docker run --rm -it \
 		-v $(CURRENT_DIR):/app \
