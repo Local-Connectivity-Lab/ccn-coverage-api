@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import { paths, components } from 'schema';
+
+type SignalStrengthReportModel = components['schemas']['SignalStrengthReportModel'];
+
 
 interface ISignal {
   latitude: string

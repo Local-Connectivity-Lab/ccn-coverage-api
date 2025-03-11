@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import { paths, components } from 'schema';
+
+type Measurement = components['schemas']['ConnectivityReportModel'];
 
 interface IMeasurement {
   latitude: number
@@ -21,18 +24,7 @@ interface MeasurementModelInterface extends mongoose.Model<MeasurementDoc> {
 }
 
 interface MeasurementDoc extends mongoose.Document {
-  latitude: number
-  longitude: number
-  timestamp: string
-  upload_speed: number
-  download_speed: number
-  ping: number
-  cell_id: string
-  device_id: string
-  device_type: string
-  group?: string
-  mid?: string
-  show_data?: boolean
+
 }
 
 const measurementSchema = new mongoose.Schema({

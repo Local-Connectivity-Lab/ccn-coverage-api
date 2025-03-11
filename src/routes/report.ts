@@ -5,6 +5,8 @@ import { ISignal, SignalData } from '../../models/signal';
 import { User, IUser } from '../../models/users';
 import { IMeasurement, MeasurementData } from '../../models/measurement';
 
+import { paths, components } from 'schema';
+
 function runIfAuthenticated(req: Request, res: Response, next: any) {
   const hpkr = Buffer.from(req.body.h_pkr, 'hex');
   const signature = Buffer.from(req.body.sigma_m, 'hex');
