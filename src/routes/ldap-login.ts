@@ -1,12 +1,12 @@
 import CONFIG from '../config';
 import express, { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
-import { Admin, IAdmin, IExpressUser } from '../../models/admins';
+import { Admin, IAdmin, IExpressUser } from '../models/admins';
 import date from 'date-and-time';
 import connectEnsureLogin from 'connect-ensure-login';
 
 const CustomStrategy = require('passport-custom').Strategy;
-const { authenticate } = require('ldap-authentication');
+import { authenticate } from 'ldap-authentication';
 
 passport.use(
   'ldap',

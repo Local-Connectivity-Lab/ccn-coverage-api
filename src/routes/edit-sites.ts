@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import fs from 'fs';
-import { Admin, IAdmin } from '../../models/admins';
+import { Admin, IAdmin } from '../models/admins';
 import connectEnsureLogin from 'connect-ensure-login';
+import logger from '../logger';
 
 const router = express.Router();
 // TODO: Check if the user is actually online (calling EPCs is_online/status)
@@ -11,18 +12,18 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const sites = JSON.parse(req.body.sites);
+
       fs.writeFile(
-        __dirname + '/../../models/sites.json',
+        __dirname + '/../models/sites.json',
         JSON.stringify(sites),
-        function (err) {
-          // const sites = req.body.sites.replace(/(^"|"$)/g, '');
-          // fs.writeFile(__dirname + '/../../models/sites.json', JSON.stringify(sites).replace(/\\/g, ""), function(err) {
+        err => {
           if (err) {
-            console.error(err);
+            logger.error(`Cannot save updated sites: ${err}`);
             res.status(500).send('database error');
             return;
           }
           res.status(201).send('updated');
+          logger.debug(`Saved new sites info: ${sites}`);
           return;
         },
       );
