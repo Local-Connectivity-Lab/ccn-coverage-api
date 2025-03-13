@@ -1,12 +1,11 @@
 import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 import { JSDOM } from 'jsdom';
-import { ISignal, SignalData, SignalDoc } from '../../models/signal';
+import { SignalData, SignalDoc } from '../models/signal';
 import {
-  IMeasurement,
   MeasurementData,
   MeasurementDoc,
-} from '../../models/measurement';
+} from '../models/measurement';
 import fs from 'fs';
 import getDataRange from '../utils/get-data-range';
 import isMapType from '../utils/is-map-type';

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 import fs from 'fs';
-import { User, IUser } from '../../models/users';
+import { User, IUser } from '../models/user';
 import { IRegisterRequest, AuthenticationMessage } from '../../models/register';
 import date from 'date-and-time';
 
@@ -40,7 +40,8 @@ router.post('/api/register', async (req: Request, res: Response) => {
   }
 
   // Check if the registration period has expired
-  const exp = date.addMinutes(user.issueDate, registerTimeoutMin);
+  const issueDate = new Date(user.issueDate);
+  const exp = date.addMinutes(issueDate, registerTimeoutMin);
   if (new Date() > exp) {
     res.status(403).send('registration period expired');
     return;

@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 import fs from 'fs';
 import { Admin, AdminDoc } from '../../models/admins';
-import { User, UserDoc } from '../../models/users';
+import { User } from '../models/user';
 import date from 'date-and-time';
 import connectEnsureLogin from 'connect-ensure-login';
 

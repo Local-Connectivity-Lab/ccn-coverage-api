@@ -12,6 +12,7 @@ import { ldapRouter } from './routes/ldap-login';
 import { newUserRouter } from './routes/new-user';
 import { usersRouter } from './routes/users';
 import { editSitesRouter } from './routes/edit-sites';
+import logger from './logger';
 
 // Change this line to match your mongodb server
 
@@ -56,7 +57,7 @@ app.use(editSitesRouter);
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  console.log('Server process terminated');
+  logger.info('Server process terminated');
   process.exit(0);
 });
 
@@ -64,12 +65,12 @@ mongoose.connect(CONFIG.mongodbURI, {
   connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
 }).then(() => {
-  console.log('Mongo connected');
+  logger.info('Mongo connected');
 }).catch(err => {
-    console.error('MongoDB connection error:', err);
+    logger.error('MongoDB connection error:', err);
     process.exit(1); // Exit with failure
 });
 
 app.listen(listeningPort, () => {
-  console.log('server is listening on port ' + listeningPort);
+  logger.info(`server is listening on port ${listeningPort}`);
 });

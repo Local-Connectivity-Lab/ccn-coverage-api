@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 
-import { ISignal, SignalData } from '../../models/signal';
-import { User, IUser } from '../../models/users';
-import { IMeasurement, MeasurementData } from '../../models/measurement';
-
-import { paths, components } from 'schema';
+import { ISignal, SignalData } from '../models/signal';
+import { User } from '../models/user';
+import { IMeasurement, MeasurementData } from '../models/measurement';
+import logger from '../logger';
 
 function runIfAuthenticated(req: Request, res: Response, next: any) {
   const hpkr = Buffer.from(req.body.h_pkr, 'hex');
@@ -16,6 +15,7 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
     (err: any, user: any) => {
       if (err || !user) {
         res.status(401).send('user not found');
+        logger.debug('User not found');
         return false;
       } else {
         const pkt = Crypto.createPublicKey({
@@ -25,6 +25,7 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
         });
         if (!Crypto.verify('sha256', message, pkt, signature)) {
           res.status(403).send('invalid signature');
+          logger.debug('Invalid signature');
           return false;
         }
         return next(req, res);
@@ -42,19 +43,21 @@ const reportSignal = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
-    signal.device_type = 'Android';
+    signal.device_type ??= 'Android';
     const data = SignalData.build(signal);
     data
       .save()
       .then(() => {
         res.status(201).send('successful');
+        logger.debug('Signal data saved');
       })
       .catch(e => {
         res.status(500).send(e);
+        logger.error(`Signal data save error: ${e}`);
       });
   } catch (error) {
-    console.error(error);
     res.status(500).send('database Error');
+    logger.error(`Database error while saving signal data: ${error}`);
   }
 };
 
@@ -67,19 +70,21 @@ const reportMeasurement = (req: Request, res: Response) => {
     if (req.body.show_data && req.body.show_data === true) {
       signal.show_data = true;
     }
-    signal.device_type = 'Android';
+    signal.device_type ??= 'Android';
     const data = MeasurementData.build(signal);
     data
       .save()
       .then(() => {
         res.status(201).send('successful');
+        logger.info('Measurement data saved');
       })
       .catch(e => {
         res.status(500).send(e);
+        logger.error(`Measurement data save error: ${e}`);
       });
   } catch (error) {
-    console.error(error);
     res.status(500).send('database Error');
+    logger.error(`Database error while saving measurement data: ${error}`);
   }
 };
 

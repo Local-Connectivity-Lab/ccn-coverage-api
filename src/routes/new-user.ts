@@ -2,9 +2,10 @@ import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 import fs from 'fs';
 import { Admin, AdminDoc } from '../../models/admins';
-import { User, UserDoc } from '../../models/users';
+import { User } from '../models/user';
 import { deflateRaw } from 'zlib';
 import connectEnsureLogin from 'connect-ensure-login';
+import logger from '../logger';
 
 const router = express.Router();
 const pka_str = fs.readFileSync('keys/api-pub', {
@@ -50,7 +51,7 @@ router.post(
             sk_t: sk.toString('hex'),
             pk_a: pka.export({ format: 'der', type: 'spki' }).toString('hex'),
           };
-          // console.log(result);
+          logger.debug(`User identity: ${identity}, result: ${result}`);
           User.findOneAndUpdate(
             { identity: identity },
             {
@@ -70,7 +71,8 @@ router.post(
               res.status(201).send(result);
             })
             .catch(err => {
-              res.status(503).send('database error');
+              res.status(503).send(`database error ${err}`);
+              logger.error(`Database error: ${err}`);
             });
         }
       },

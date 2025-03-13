@@ -1056,49 +1056,55 @@ export interface components {
              * @description Unique identifier for the user
              * @example 9a8b7c6d5e4f3g2h1i
              */
-            identity?: string;
+            identity: string;
             /**
              * Format: email
              * @description User's email address
              * @example user@example.com
              */
-            email?: string;
+            email: string;
             /**
              * @description User's first name
              * @example John
              */
-            firstName?: string;
+            firstName: string;
             /**
              * @description User's last name
              * @example Doe
              */
-            lastName?: string;
+            lastName: string;
             /**
              * @description Whether the user has completed registration
              * @example true
              */
-            registered?: boolean;
+            registered: boolean;
             /**
              * Format: date-time
              * @description Date when the user was issued or account was created
              * @example 2023-03-15T14:30:45.123Z
              */
-            issueDate?: string;
+            issueDate: string;
             /**
              * @description Whether the user account is currently enabled
              * @example true
              */
-            isEnabled?: boolean;
+            isEnabled: boolean;
             /**
              * @description User's public key
              * @example 308201a2300d06092a864886f70d01010105000382018f003082018a02820181...
              */
-            publicKey?: string;
+            publicKey: string;
             /**
              * @description QR code data for user registration
              * @example {"sigma_t":"...","sk_t":"...","pk_a":"..."}
              */
-            qrCode?: string;
+            qrCode: string;
+            /**
+             * Format: date-time
+             * @description Last time the user was online in ISO 8601 date-time (YYYY-MM-DDTHH:mm:ss.sssZ)
+             * @example 2023-03-15T14:30:45.123Z
+             */
+            lastOnline: string;
         };
         UserListResponse: {
             /** @description List of pending users (not yet registered) whose issue date is within the expiry limit */

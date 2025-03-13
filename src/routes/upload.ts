@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
-import { ISignal, SignalData } from '../../models/signal';
-import { Admin, IAdmin } from '../../models/admins';
-import { IMeasurement, MeasurementData } from '../../models/measurement';
+import { SignalData } from '../models/signal';
+import { MeasurementData } from '../models/measurement';
 import connectEnsureLogin from 'connect-ensure-login';
 import { reduceEachTrailingCommentRange } from 'typescript';
 const CSV = require('csv-string');
