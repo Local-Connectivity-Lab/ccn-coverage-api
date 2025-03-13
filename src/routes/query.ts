@@ -2,10 +2,7 @@ import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
 import { JSDOM } from 'jsdom';
 import { SignalData, SignalDoc } from '../models/signal';
-import {
-  MeasurementData,
-  MeasurementDoc,
-} from '../models/measurement';
+import { MeasurementData, MeasurementDoc } from '../models/measurement';
 import fs from 'fs';
 import getDataRange from '../utils/get-data-range';
 import isMapType from '../utils/is-map-type';

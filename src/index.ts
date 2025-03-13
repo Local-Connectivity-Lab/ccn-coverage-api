@@ -61,15 +61,18 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-mongoose.connect(CONFIG.mongodbURI, {
-  connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-}).then(() => {
-  logger.info('Mongo connected');
-}).catch(err => {
+mongoose
+  .connect(CONFIG.mongodbURI, {
+    connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  })
+  .then(() => {
+    logger.info('Mongo connected');
+  })
+  .catch(err => {
     logger.error('MongoDB connection error:', err);
     process.exit(1); // Exit with failure
-});
+  });
 
 app.listen(listeningPort, () => {
   logger.info(`server is listening on port ${listeningPort}`);
