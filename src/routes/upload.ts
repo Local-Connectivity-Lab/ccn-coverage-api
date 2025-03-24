@@ -4,6 +4,7 @@ import { SignalData } from '../models/signal';
 import { MeasurementData } from '../models/measurement';
 import connectEnsureLogin from 'connect-ensure-login';
 import { reduceEachTrailingCommentRange } from 'typescript';
+import logger from '../logger';
 const CSV = require('csv-string');
 
 const router = express.Router();
@@ -30,7 +31,7 @@ router.post(
       const groups = [...new Set([...signalGroup, ...measurementGroup])];
       res.status(200).send(groups);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).send('database error');
     }
   },
@@ -44,7 +45,7 @@ router.post(
       await removeGroupMeasurement(req.body.group);
       res.status(200).send('successfully deleted');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).send('database error');
     }
   },
@@ -58,7 +59,7 @@ router.post(
       await removeManualMeasurement();
       res.status(200).send('successfully deleted');
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).send('database error');
     }
   },
@@ -69,8 +70,8 @@ router.post(
   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
-      // console.log(req.body.csv)
-      // console.log(req.body.group);
+      // logger.log(req.body.csv)
+      // logger.log(req.body.group);
       if (!req.body || !req.body.csv) {
         res.status(400).send('Bad request');
         return;
@@ -130,7 +131,7 @@ router.post(
           return;
         });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).send('Incorrect Format or Database Error');
     }
   },

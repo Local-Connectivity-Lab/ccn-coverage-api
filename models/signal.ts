@@ -1,5 +1,5 @@
 // import mongoose from 'mongoose';
-// import { paths, components } from 'schema';
+// import { paths, components } from '../types/schema';
 
 // type SignalStrengthReportModel = components['schemas']['SignalStrengthReportModel'];
 

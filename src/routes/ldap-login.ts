@@ -7,6 +7,7 @@ import connectEnsureLogin from 'connect-ensure-login';
 
 const CustomStrategy = require('passport-custom').Strategy;
 import { authenticate } from 'ldap-authentication';
+import logger from '../logger';
 
 passport.use(
   'ldap',
@@ -87,7 +88,7 @@ router.post(
 router.get('/api/logout', (req: Request, res: Response) => {
   req.logout(err => {
     if (err) {
-      console.error(err);
+      logger.error(err);
       res.status(500).send('logout failed');
       return;
     }

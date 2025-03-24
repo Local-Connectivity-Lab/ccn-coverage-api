@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-  '/register': {
+  '/api/register': {
     parameters: {
       query?: never;
       header?: never;
@@ -21,7 +21,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/report_signal': {
+  '/api/report_signal': {
     parameters: {
       query?: never;
       header?: never;
@@ -38,7 +38,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/report_measurement': {
+  '/api/report_measurement': {
     parameters: {
       query?: never;
       header?: never;
@@ -55,7 +55,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/data': {
+  '/api/data': {
     parameters: {
       query?: never;
       header?: never;
@@ -64,7 +64,7 @@ export interface paths {
     };
     /**
      * Retrieve network data
-     * @description Fetches network data with optional filtering by cell_id or timestamp range. When filtering by timestamp, both timestamp_from and timestamp_to must be provided together to define a date range. Results are always sorted by timestamp.
+     * @description Fetches network data with optional filtering by cell_id or timestamp range, and visual display parameters. When filtering by timestamp, both timestamp_from and timestamp_to must be provided together to define a date range. Results are always sorted by timestamp.
      */
     get: {
       parameters: {
@@ -75,6 +75,26 @@ export interface paths {
           timestamp_from?: string;
           /** @description End of timestamp range - must be used together with timestamp_from */
           timestamp_to?: string;
+          /** @description Width of the display area in pixels */
+          width?: number;
+          /** @description Height of the display area in pixels */
+          height?: number;
+          /** @description Top coordinate of the viewport */
+          top?: number;
+          /** @description Left coordinate of the viewport */
+          left?: number;
+          /** @description Controls the size of data bins for aggregation */
+          binSizeShift?: number;
+          /** @description Zoom level for the map view */
+          zoom?: number;
+          /** @description Comma-separated list of selected site identifiers */
+          selectedSites?: string;
+          /** @description Type of map visualization to display */
+          mapType?: string;
+          /** @description Alternative format for timestamp_from */
+          timeFrom?: string;
+          /** @description Alternative format for timestamp_to */
+          timeTo?: string;
         };
         header?: never;
         path?: never;
@@ -88,7 +108,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['SiteMeasurementData'][];
+            'application/json': components['schemas']['QueryData'][];
           };
         };
         /** @description Invalid input */
@@ -108,7 +128,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/sucess': {
+  '/api/sucess': {
     parameters: {
       query?: never;
       header?: never;
@@ -147,7 +167,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/failure': {
+  '/api/failure': {
     parameters: {
       query?: never;
       header?: never;
@@ -186,7 +206,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/sitesSummary': {
+  '/api/sitesSummary': {
     parameters: {
       query?: never;
       header?: never;
@@ -217,7 +237,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['SiteSummary'];
+            'application/json': components['schemas']['SitesSummary'];
           };
         };
         /** @description Bad request */
@@ -237,7 +257,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/lineSummary': {
+  '/api/lineSummary': {
     parameters: {
       query?: never;
       header?: never;
@@ -292,7 +312,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/markers': {
+  '/api/markers': {
     parameters: {
       query?: never;
       header?: never;
@@ -336,6 +356,54 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/dataRange': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get geographic boundaries of available data
+     * @description Returns the center coordinates and bounding box (minimum and maximum latitude/longitude) of all available measurement data.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Geographic boundaries of available data */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DataRangeResponse'];
+          };
+        };
+        /** @description Server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
         };
       };
     };
@@ -1212,32 +1280,32 @@ export interface components {
      *         "dbm": -78.4
      *       }
      *     } */
-    SiteSummary: {
+    SitesSummary: {
       [key: string]: {
         /**
          * Format: double
          * @description Average ping in milliseconds
          * @example 137.41
          */
-        ping?: number;
+        ping: number;
         /**
          * Format: double
          * @description Average download speed
          * @example 5.23
          */
-        download_speed?: number;
+        download_speed: number;
         /**
          * Format: double
          * @description Average upload speed
          * @example 7.28
          */
-        upload_speed?: number;
+        upload_speed: number;
         /**
          * Format: double
          * @description Average signal strength in dBm
          * @example -85.3
          */
-        dbm?: number;
+        dbm: number;
       };
     };
     MarkerData: {
@@ -1298,21 +1366,21 @@ export interface components {
        * @description Name of the site
        * @example Filipino Community Center
        */
-      site?: string;
+      site: string;
       /** @description Time series data points for the site */
-      values?: {
+      values: {
         /**
          * Format: date-time
          * @description Timestamp for the data point
          * @example 2021-01-25T18:00:00.000Z
          */
-        date?: string;
+        date: string;
         /**
          * Format: double
          * @description Average value for the metric at this timestamp
          * @example 7.28
          */
-        value?: number;
+        value: number;
       }[];
     };
     UserRegistration: {
@@ -1399,6 +1467,53 @@ export interface components {
        * @example 1e683a49d71ffd0
        */
       device_id: string;
+    };
+    DataRangeResponse: {
+      /**
+       * @description Center coordinates [latitude, longitude] of the data range
+       * @example [
+       *       47.6062,
+       *       -122.3321
+       *     ]
+       */
+      center: number[];
+      /**
+       * Format: double
+       * @description Minimum latitude value in the data range
+       * @example 47.5001
+       */
+      minLat: number;
+      /**
+       * Format: double
+       * @description Minimum longitude value in the data range
+       * @example -122.4382
+       */
+      minLon: number;
+      /**
+       * Format: double
+       * @description Maximum latitude value in the data range
+       * @example 47.734
+       */
+      maxLat: number;
+      /**
+       * Format: double
+       * @description Maximum longitude value in the data range
+       * @example -122.2364
+       */
+      maxLon: number;
+    };
+    /** @description Represents a single data point in a query result */
+    QueryData: {
+      /**
+       * @description The bin/bucket identifier for data categorization
+       * @example 3
+       */
+      bin: number;
+      /**
+       * @description The string representation of calculated average value for data in this bin with 2 decimal places.
+       * @example 45.70
+       */
+      average: string;
     };
   };
   responses: never;

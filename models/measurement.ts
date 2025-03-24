@@ -1,5 +1,5 @@
 // import mongoose from 'mongoose';
-// import { paths, components } from 'schema';
+// import { paths, components } from '../types/schema';
 
 // type Measurement = components['schemas']['ConnectivityReportModel'];
 

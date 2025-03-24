@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import * as Crypto from 'crypto';
 import { JSDOM } from 'jsdom';
 import { SignalData, SignalDoc } from '../models/signal';
@@ -6,7 +6,20 @@ import { MeasurementData, MeasurementDoc } from '../models/measurement';
 import fs from 'fs';
 import getDataRange from '../utils/get-data-range';
 import isMapType from '../utils/is-map-type';
-import isMeasurementType from '../utils/is-measurement-type';
+import logger from '../logger';
+import path from 'path';
+import { components } from '../types/schema';
+
+type Site = components['schemas']['Site'];
+type QueryData = components['schemas']['QueryData'];
+type LineSummaryItem = components['schemas']['LineSummaryItem'];
+type SitesSummary = components['schemas']['SitesSummary'];
+type MarkerData = components['schemas']['MarkerData'];
+
+const modelJsonPath = path.join(__dirname + '/../models/sites.json');
+const defaultModelJsonPath = path.join(
+  __dirname + '/../models/default_sites.json',
+);
 
 const router = express.Router();
 const dom = new JSDOM('');
@@ -21,17 +34,6 @@ Object.defineProperty(global, 'navigator', {
 import * as L from 'leaflet';
 
 export { router as dataRouter };
-
-// Prepare site information
-type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
-type Site = {
-  name: string;
-  latitude: number;
-  longitude: number;
-  status: SiteStatus;
-  address: string;
-  cell_id?: string[];
-};
 
 // Helper functions
 const average = (numbers: number[]) => sum(numbers) / numbers.length;
@@ -56,13 +58,13 @@ console;
 const dataRange = getDataRange(sites);
 
 function updateSite() {
-  if (fs.existsSync('models/sites.json')) {
-    return JSON.parse(fs.readFileSync('models/sites.json').toString());
+  if (fs.existsSync(modelJsonPath)) {
+    return JSON.parse(fs.readFileSync(modelJsonPath).toString());
   } else {
-    fs.copyFile('models/sites-default.json', 'models/sites.json', res => {
-      console.log('update sites from default');
+    fs.copyFile(defaultModelJsonPath, modelJsonPath, res => {
+      logger.debug('update sites from default');
     });
-    return JSON.parse(fs.readFileSync('models/sites-default.json').toString());
+    return JSON.parse(fs.readFileSync(defaultModelJsonPath).toString());
   }
 }
 router.get('/api/sites', (_, res: Response) => {
@@ -88,90 +90,104 @@ router.get('/api/data', (req, res) => {
     const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     findObj['show_data'] = true;
+
+    if (!(Array.isArray(dataRange.center) && dataRange.center.length === 2)) {
+      res.status(400).send('Invalid dataRange center format');
+      logger.error('Invalid dataRange.center: ' + dataRange.center);
+      return;
+    }
+
     const map = L.map(dom.window.document.createElement('div')).setView(
-      dataRange.center,
+      dataRange.center as [number, number],
       zoom,
     );
     if (!isMapType(mapType)) {
       res.status(400).send('Invalid mapType: ' + mapType);
-      console.error('Invalid mapType: ' + mapType);
+      logger.error('Invalid mapType: ' + mapType);
       return;
     }
     const callback = (dat: Map<number, Array<number>>) => {
-      let result = [];
+      let result = Array<QueryData>();
       for (const [key, value] of dat.entries()) {
-        result.push([key, average(value).toFixed(2)]);
+        result.push({ bin: key, average: average(value).toFixed(2) });
       }
       res.send(result);
     };
     // Still return nulls if selected sites are invalid
-    if (findObj['cell_id'] != undefined) {
-      if (isMeasurementType(mapType)) {
-        MeasurementData.find(findObj)
-          .sort('timestamp')
-          .exec()
-          .then(data => {
-            const dat = new Map<number, Array<number>>();
-            data.forEach(d => {
-              const { x, y } = map.project([d.latitude, d.longitude], zoom);
-              const value: number = d[mapType];
-              const index =
-                ((x - left) >> binSizeShift) * height +
-                ((y - top) >> binSizeShift);
-              if (!dat.has(index)) {
-                dat.set(index, new Array());
-              }
-              var ar = dat.get(index);
-              if (ar !== undefined) {
-                ar.push(value);
+    if (findObj['cell_id'] !== undefined) {
+      switch (mapType) {
+        case 'dbm':
+          SignalData.find(findObj)
+            .sort('timestamp')
+            .exec()
+            .then(data => {
+              const dat = new Map<number, Array<number>>();
+              data.forEach(d => {
+                const { x, y } = map.project([d.latitude, d.longitude], zoom);
+                const value: number = d['dbm'];
+                const index =
+                  ((x - left) >> binSizeShift) * height +
+                  ((y - top) >> binSizeShift);
+                if (!dat.has(index)) {
+                  dat.set(index, new Array());
+                }
+                var ar = dat.get(index);
+                if (ar !== undefined) {
+                  ar.push(value);
+                }
+              });
+              callback(dat);
+              return;
+            })
+            .catch(err => {
+              if (err) {
+                logger.error(err);
+                res.status(400).send(err);
+                return;
               }
             });
-            callback(dat);
-            return;
-          })
-          .catch(err => {
-            if (err) {
-              console.error(err);
-              res.status(400).send(err);
+        case 'download_speed':
+        case 'ping':
+        case 'upload_speed':
+          MeasurementData.find(findObj)
+            .sort('timestamp')
+            .exec()
+            .then(data => {
+              const dat = new Map<number, Array<number>>();
+              data.forEach(d => {
+                const { x, y } = map.project([d.latitude, d.longitude], zoom);
+                const value: number =
+                  d[mapType as 'ping' | 'upload_speed' | 'download_speed'];
+                const index =
+                  ((x - left) >> binSizeShift) * height +
+                  ((y - top) >> binSizeShift);
+                if (!dat.has(index)) {
+                  dat.set(index, new Array());
+                }
+                var ar = dat.get(index);
+                if (ar !== undefined) {
+                  ar.push(value);
+                }
+              });
+              callback(dat);
               return;
-            }
-          });
-      } else {
-        SignalData.find(findObj)
-          .sort('timestamp')
-          .exec()
-          .then(data => {
-            const dat = new Map<number, Array<number>>();
-            data.forEach(d => {
-              const { x, y } = map.project([d.latitude, d.longitude], zoom);
-              const value: number = d['dbm'];
-              const index =
-                ((x - left) >> binSizeShift) * height +
-                ((y - top) >> binSizeShift);
-              if (!dat.has(index)) {
-                dat.set(index, new Array());
-              }
-              var ar = dat.get(index);
-              if (ar !== undefined) {
-                ar.push(value);
+            })
+            .catch(err => {
+              if (err) {
+                logger.error(err);
+                res.status(400).send(err);
+                return;
               }
             });
-            callback(dat);
-            return;
-          })
-          .catch(err => {
-            if (err) {
-              console.error(err);
-              res.status(400).send(err);
-              return;
-            }
-          });
+        default:
+          logger.error('Unknown map type ' + mapType);
+          res.status(400).send('Unknown map type ' + mapType);
       }
     } else {
       callback(new Map<number, Array<number>>());
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(400).send(error);
   }
 });
@@ -180,11 +196,10 @@ router.get('/api/sitesSummary', (req, res) => {
   try {
     const timeFrom = req.query.timeFrom + '';
     const timeTo = req.query.timeTo + '';
-    let output: any = {};
-    let measurementNum: any = {};
-    let signalNum: any = {};
+    let output: SitesSummary = {};
+    let measurementNum: Record<string, number> = {};
+    let signalNum: Record<string, number> = {};
     let findObj: any = getFindObj(timeFrom, timeTo, '');
-    // console.log(findObj);
     const measurementPromise = MeasurementData.find(findObj)
       .sort('timestamp')
       .exec();
@@ -231,12 +246,16 @@ router.get('/api/sitesSummary', (req, res) => {
       res.send(output);
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(400).send(error);
   }
 });
 
 router.get('/api/lineSummary', (req, res) => {
+  type AggregatedData = {
+    [site: string]: { [timestamp: string]: { sum: number; count: number } };
+  };
+
   try {
     const mapType = req.query.mapType + '';
     const selectedSites = req.query.selectedSites + '';
@@ -244,93 +263,98 @@ router.get('/api/lineSummary', (req, res) => {
     const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     // Send nothing if no sites
-    let agg: any = {};
+    let agg: AggregatedData = {};
     if (findObj['cell_id'] == undefined) {
       res.status(200).send([]);
       return;
     }
     if (!isMapType(mapType)) {
       res.status(400).send('Invalid mapType: ' + mapType);
-      console.error('Invalid mapType: ' + mapType);
+      logger.error('Invalid mapType: ' + mapType);
       return;
     }
-    const aggCallback = (agg: any) => {
-      const aggData = agg as {
-        [site: string]: { [timestamp: string]: { sum: number; count: number } };
-      };
-
-      const avgData = Object.entries(aggData).map(([k, v]) => ({
-        site: k,
-        values: Object.entries(v).map(([date, { sum, count }]) => ({
-          date,
-          value: sum / count,
-        })),
-      }));
+    const aggCallback = (aggData: AggregatedData) => {
+      const avgData: Array<LineSummaryItem> = Object.entries(aggData).map(
+        ([k, v]) => ({
+          site: k,
+          values: Object.entries(v).map(([date, { sum, count }]) => ({
+            date,
+            value: sum / count,
+          })),
+        }),
+      );
 
       avgData.forEach(a => a.values.sort((a, b) => (a.date < b.date ? -1 : 1)));
 
       res.send(avgData);
     };
-    if (isMeasurementType(mapType)) {
-      MeasurementData.find(findObj)
-        .sort('timestamp')
-        .exec()
-        .then(data => {
-          for (let m of data) {
-            const siteName = siteNameDict[m.cell_id];
-            if (siteName == undefined) {
-              continue;
+
+    switch (mapType) {
+      case 'dbm':
+        SignalData.find(findObj)
+          .sort('timestamp')
+          .exec()
+          .then(data => {
+            for (let s of data) {
+              const siteName = siteNameDict[s.cell_id];
+              if (siteName == undefined) {
+                continue;
+              }
+              const time = new Date(
+                new Date(s.timestamp).setSeconds(0),
+              ).toISOString();
+              agg[siteName] = agg[siteName] ?? {};
+              agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
+              agg[siteName][time].sum += s.dbm;
+              agg[siteName][time].count += 1;
             }
-            // console.log(new Date(new Date(m.timestamp).setSeconds(0)).toISOString())
-            const time = new Date(
-              new Date(m.timestamp).setSeconds(0),
-            ).toISOString();
-            agg[siteName] = agg[siteName] ?? {};
-            agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
-            agg[siteName][time].sum += m[mapType];
-            agg[siteName][time].count += 1;
-          }
-          aggCallback(agg);
-          return;
-        })
-        .catch(err => {
-          if (err) {
-            console.error(err);
-            res.status(400).send(err);
+            aggCallback(agg);
             return;
-          }
-        });
-    } else {
-      SignalData.find(findObj)
-        .sort('timestamp')
-        .exec()
-        .then(data => {
-          for (let s of data) {
-            const siteName = siteNameDict[s.cell_id];
-            if (siteName == undefined) {
-              continue;
+          })
+          .catch(err => {
+            if (err) {
+              logger.error(err);
+              res.status(400).send(err);
+              return;
             }
-            const time = new Date(
-              new Date(s.timestamp).setSeconds(0),
-            ).toISOString();
-            agg[siteName] = agg[siteName] ?? {};
-            agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
-            agg[siteName][time].sum += s.dbm;
-            agg[siteName][time].count += 1;
-          }
-          aggCallback(agg);
-          return;
-        })
-        .catch(err => {
-          if (err) {
-            console.error(err);
-            res.status(400).send(err);
+          });
+      case 'download_speed':
+      case 'ping':
+      case 'upload_speed':
+        MeasurementData.find(findObj)
+          .sort('timestamp')
+          .exec()
+          .then(data => {
+            for (let m of data) {
+              const siteName = siteNameDict[m.cell_id];
+              if (siteName == undefined) {
+                continue;
+              }
+              const time = new Date(
+                new Date(m.timestamp).setSeconds(0),
+              ).toISOString();
+              agg[siteName] = agg[siteName] ?? {};
+              agg[siteName][time] = agg[siteName][time] ?? { sum: 0, count: 0 };
+              agg[siteName][time].sum +=
+                m[mapType as 'ping' | 'upload_speed' | 'download_speed'];
+              agg[siteName][time].count += 1;
+            }
+            aggCallback(agg);
             return;
-          }
-        });
+          })
+          .catch(err => {
+            if (err) {
+              logger.error(err);
+              res.status(400).send(err);
+              return;
+            }
+          });
+      default:
+        logger.error('Unknown map type ' + mapType);
+        res.status(400).send('Unknown map type ' + mapType);
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(400).send(error);
   }
 });
@@ -354,7 +378,7 @@ router.get('/api/markers', (req, res) => {
       const signal: SignalDoc[] = values[0];
       const measurement: MeasurementDoc[] = values[1];
       const lookup = new Map<string, number>();
-      const data: any = [];
+      const data: MarkerData[] = [];
       signal.forEach((row: SignalDoc) => {
         if (row.mid) {
           lookup.set(row.mid, row.dbm);
@@ -386,11 +410,10 @@ router.get('/api/markers', (req, res) => {
           });
         }
       });
-      // console.log(data);
       return res.send(data);
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(400).send(error);
   }
 });

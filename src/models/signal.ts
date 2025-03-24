@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { components } from 'schema';
+import { components } from '../types/schema';
 import { AuxReportData } from './util';
 
 type SignalStrength = components['schemas']['SignalStrengthReportModel'];

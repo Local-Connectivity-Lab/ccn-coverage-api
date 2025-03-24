@@ -1,7 +1,8 @@
-import pino from 'pino';
+import path from 'path';
+import pino, { multistream } from 'pino';
 
 function createLogger() {
-  const logLevel = process.env.LOG_LEVEL || 'info';
+  const logLevel = process.env.LOG_LEVEL || 'debug';
 
   // Configure the logger
   const loggerOptions: pino.LoggerOptions = {
@@ -23,15 +24,12 @@ function createLogger() {
     },
   };
 
-  const transport = pino.transport({
-    target: 'pino/file',
-    options: {
-      destination: './ccn-coverage-api.log',
-      mkdir: true,
-    },
-  });
+  const logStreams = pino.multistream([
+    { level: 'debug', stream: process.stdout },
+    { level: 'warn', stream: process.stderr },
+  ]);
 
-  const logger = pino(loggerOptions, transport);
+  const logger = pino(loggerOptions, logStreams);
 
   // Make sure logs are flushed on exit
   process.on('exit', () => {
