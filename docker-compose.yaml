@@ -20,6 +20,7 @@ services:
     volumes:
       - mongo-data-db:/data/db
       - mongo-data-configdb:/data/configdb
+      - ${PWD}/mock/mongo:/docker-entrypoint-initdb.d
     restart: unless-stopped
     networks:
       - app-network

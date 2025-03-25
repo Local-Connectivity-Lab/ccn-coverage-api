@@ -5,7 +5,7 @@ import { SignalData, SignalDoc } from '../models/signal';
 import { MeasurementData, MeasurementDoc } from '../models/measurement';
 import fs from 'fs';
 import getDataRange from '../utils/get-data-range';
-import isMapType from '../utils/is-map-type';
+import isValidMapType from '../utils/is-map-type';
 import logger from '../logger';
 import path from 'path';
 import { components } from '../types/schema';
@@ -101,7 +101,7 @@ router.get('/api/data', (req, res) => {
       dataRange.center as [number, number],
       zoom,
     );
-    if (!isMapType(mapType)) {
+    if (!isValidMapType(mapType)) {
       res.status(400).send('Invalid mapType: ' + mapType);
       logger.error('Invalid mapType: ' + mapType);
       return;
@@ -268,7 +268,7 @@ router.get('/api/lineSummary', (req, res) => {
       res.status(200).send([]);
       return;
     }
-    if (!isMapType(mapType)) {
+    if (!isValidMapType(mapType)) {
       res.status(400).send('Invalid mapType: ' + mapType);
       logger.error('Invalid mapType: ' + mapType);
       return;

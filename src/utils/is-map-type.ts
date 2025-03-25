@@ -1,4 +1,4 @@
-export default function isMapType(
+export default function isValidMapType(
   s: string,
 ): s is 'ping' | 'upload_speed' | 'download_speed' | 'dbm' {
   return (

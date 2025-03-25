@@ -8,6 +8,7 @@ CURRENT_DIR=$(shell pwd)
 clean:
 	@echo "Clean"
 	rm -rf build
+	docker volume rm ccn-coverage-api_mongo-data-db ccn-coverage-api_mongo-data-configdb
 
 .PHONY: build
 build:
