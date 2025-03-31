@@ -1,7 +1,7 @@
 services:
   ccn-coverage-api:
     container_name: ccn-coverage-api
-    image: ccn-coverage-api
+    image: ccn-coverage-api:latest
     ports:
       - "3000:3000"
     environment:

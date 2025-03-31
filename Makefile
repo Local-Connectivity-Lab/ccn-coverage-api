@@ -21,4 +21,5 @@ dev:
 	docker run --rm -it \
 		-v $(CURRENT_DIR):/app \
 		-w /app \
+		-p 3000:3000 \
 		$(DOCKER_IMAGE) /bin/bash

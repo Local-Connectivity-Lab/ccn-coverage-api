@@ -85,15 +85,22 @@ router.get('/api/data', (req, res) => {
     const binSizeShift = Number.parseInt(req.query.binSizeShift + '');
     const zoom = Number.parseInt(req.query.zoom + '');
     const selectedSites = req.query.selectedSites + '';
-    const mapType = req.query.mapType + '';
+    const mapType =
+      typeof req.query.mapType === 'string' ? req.query.mapType : '';
     const timeFrom = req.query.timeFrom + '';
     const timeTo = req.query.timeTo + '';
     const findObj = getFindObj(timeFrom, timeTo, selectedSites);
     findObj['show_data'] = true;
 
     if (!(Array.isArray(dataRange.center) && dataRange.center.length === 2)) {
-      res.status(400).send('Invalid dataRange center format');
       logger.error('Invalid dataRange.center: ' + dataRange.center);
+      res.status(400).send('[/api/data]: Invalid dataRange center format');
+      return;
+    }
+
+    if (!isValidMapType(mapType)) {
+      logger.error(`[/api/data]: Invalid mapType received: ${mapType}`);
+      res.status(400).send(`Invalid mapType: ${mapType}`);
       return;
     }
 
@@ -101,11 +108,7 @@ router.get('/api/data', (req, res) => {
       dataRange.center as [number, number],
       zoom,
     );
-    if (!isValidMapType(mapType)) {
-      res.status(400).send('Invalid mapType: ' + mapType);
-      logger.error('Invalid mapType: ' + mapType);
-      return;
-    }
+
     const callback = (dat: Map<number, Array<number>>) => {
       let result = Array<QueryData>();
       for (const [key, value] of dat.entries()) {
@@ -113,6 +116,7 @@ router.get('/api/data', (req, res) => {
       }
       res.send(result);
     };
+
     // Still return nulls if selected sites are invalid
     if (findObj['cell_id'] !== undefined) {
       switch (mapType) {
@@ -137,7 +141,6 @@ router.get('/api/data', (req, res) => {
                 }
               });
               callback(dat);
-              return;
             })
             .catch(err => {
               if (err) {
@@ -146,6 +149,7 @@ router.get('/api/data', (req, res) => {
                 return;
               }
             });
+          break;
         case 'download_speed':
         case 'ping':
         case 'upload_speed':
@@ -170,7 +174,6 @@ router.get('/api/data', (req, res) => {
                 }
               });
               callback(dat);
-              return;
             })
             .catch(err => {
               if (err) {
@@ -179,9 +182,11 @@ router.get('/api/data', (req, res) => {
                 return;
               }
             });
+          break;
         default:
-          logger.error('Unknown map type ' + mapType);
+          logger.error('[/api/data]: Unknown map type ' + mapType);
           res.status(400).send('Unknown map type ' + mapType);
+          return;
       }
     } else {
       callback(new Map<number, Array<number>>());
@@ -257,7 +262,8 @@ router.get('/api/lineSummary', (req, res) => {
   };
 
   try {
-    const mapType = req.query.mapType + '';
+    const mapType =
+      typeof req.query.mapType === 'string' ? req.query.mapType : '';
     const selectedSites = req.query.selectedSites + '';
     const timeFrom = req.query.timeFrom + '';
     const timeTo = req.query.timeTo + '';
@@ -268,8 +274,9 @@ router.get('/api/lineSummary', (req, res) => {
       res.status(200).send([]);
       return;
     }
+
     if (!isValidMapType(mapType)) {
-      res.status(400).send('Invalid mapType: ' + mapType);
+      res.status(400).send('[/api/lineSummary]: Invalid mapType: ' + mapType);
       logger.error('Invalid mapType: ' + mapType);
       return;
     }
@@ -318,6 +325,7 @@ router.get('/api/lineSummary', (req, res) => {
               return;
             }
           });
+        break;
       case 'download_speed':
       case 'ping':
       case 'upload_speed':
@@ -349,8 +357,9 @@ router.get('/api/lineSummary', (req, res) => {
               return;
             }
           });
+        break;
       default:
-        logger.error('Unknown map type ' + mapType);
+        logger.error('[/api/lineSummary]: Unknown map type ' + mapType);
         res.status(400).send('Unknown map type ' + mapType);
     }
   } catch (error) {
@@ -410,7 +419,7 @@ router.get('/api/markers', (req, res) => {
           });
         }
       });
-      return res.send(data);
+      res.send(data);
     });
   } catch (error) {
     logger.error(error);

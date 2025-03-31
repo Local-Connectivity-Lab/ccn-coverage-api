@@ -5,10 +5,13 @@ import { Admin, AdminDoc } from '../models/admins';
 import { User } from '../models/user';
 import date from 'date-and-time';
 import connectEnsureLogin from 'connect-ensure-login';
+import { components } from '../types/schema';
 
 const router = express.Router();
 // Calculate how long not to display expired registration request
 const expDisplayLimitMin = 30000;
+
+type UserResponse = components['schemas']['GetUserResponse'];
 
 // Get users
 // Need an admin token for this API
@@ -29,7 +32,7 @@ router.post(
     res.status(200).send({
       pending: pending,
       registered: registered,
-    });
+    } as UserResponse);
   },
 );
 
