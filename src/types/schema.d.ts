@@ -875,7 +875,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/secure/logout': {
+  '/api/logout': {
     parameters: {
       query?: never;
       header?: never;
@@ -992,7 +992,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/secure/new_user': {
+  '/secure/new-user': {
     parameters: {
       query?: never;
       header?: never;
