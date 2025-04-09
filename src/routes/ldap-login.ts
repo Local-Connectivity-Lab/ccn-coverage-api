@@ -1,9 +1,6 @@
 import CONFIG from '../config';
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import passport from 'passport';
-import { Admin, IAdmin, IExpressUser } from '../models/admins';
-import date from 'date-and-time';
-import connectEnsureLogin from 'connect-ensure-login';
 
 const CustomStrategy = require('passport-custom').Strategy;
 import { authenticate } from 'ldap-authentication';
@@ -42,15 +39,6 @@ passport.use(
   }),
 );
 
-// passport requires this
-passport.serializeUser(function (user, done: (a: any, b: any) => void) {
-  done(null, user);
-});
-// passport requires this
-passport.deserializeUser(function (user, done: (a: any, b: any) => void) {
-  done(null, user);
-});
-
 declare global {
   namespace Express {
     interface User {
@@ -74,16 +62,35 @@ router.get('/api/failure', (req: Request, res: Response) => {
   return;
 });
 
-router.post(
-  '/secure/login',
-  passport.authenticate('ldap', {
-    failureRedirect: '/api/failure',
-    successRedirect: '/api/success',
-  }),
-  (req: Request, res: Response) => {
-    res.status(200).send('success');
-  },
-);
+router.post('/secure/login', (req, res, next) => {
+  passport.authenticate('ldap', (error: any, user: any, info: any) => {
+    if (error || !user) {
+      logger.error(
+        `LDAP authentication error: ${error?.message || 'No user found'}`,
+      );
+      return res.status(401).json({ error: 'Authentication failed' });
+    }
+
+    req.login(user, loginErr => {
+      if (loginErr) {
+        return res.status(500).json({ error: 'Failed to establish session' });
+      }
+
+      // Force session save
+      req.session.save(err => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ error: 'Failed to save session' });
+        }
+
+        // Return success with redirect instruction
+        return res.status(200).json({
+          result: 'success',
+        });
+      });
+    });
+  })(req, res, next);
+});
 
 router.get('/api/logout', (req: Request, res: Response) => {
   req.logout(err => {
@@ -92,6 +99,6 @@ router.get('/api/logout', (req: Request, res: Response) => {
       res.status(500).send('logout failed');
       return;
     }
+    res.status(200).send('logged out');
   });
-  res.status(200).send('logged out');
 });

@@ -2,6 +2,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
     "@types/leaflet": "^1.7.5",
     "@types/passport": "^1.0.17",
     "copyfiles": "^2.4.1",
@@ -10,7 +11,6 @@
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
-    "@types/body-parser": "^1.19.2",
     "@types/connect-ensure-login": "^0.1.7",
     "@types/cookie-session": "^2.0.44",
     "@types/d3": "^7.1.0",
@@ -20,13 +20,12 @@
     "@types/node-rsa": "^1.1.1",
     "@types/npm": "^7.19.0",
     "axios": "^1.8.1",
-    "body-parser": "^1.19.0",
     "connect-ensure-login": "^0.1.1",
-    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
     "csv-string": "^4.1.0",
     "date-and-time": "^3.6.0",
     "express": "^4.17.1",
-    "express-session": "^1.17.2",
+    "express-session": "^1.18.1",
     "jsdom": "^26.0.0",
     "ldap-authentication": "^3.3.4",
     "leaflet": "^1.7.1",

@@ -22,4 +22,5 @@ dev:
 		-v $(CURRENT_DIR):/app \
 		-w /app \
 		-p 3000:3000 \
+		--network ccn-coverage-api_app-network \
 		$(DOCKER_IMAGE) /bin/bash

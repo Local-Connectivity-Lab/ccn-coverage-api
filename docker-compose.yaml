@@ -6,6 +6,7 @@ services:
       - "3000:3000"
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/api-data
+      - LDAP_URI=ldap://ldap:389
     depends_on:
       - mongodb
       - ldap

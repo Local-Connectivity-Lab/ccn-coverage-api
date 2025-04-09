@@ -29,7 +29,7 @@ router.post(
     })
       .sort('-issueDate')
       .exec();
-    res.status(200).send({
+    res.status(200).json({
       pending: pending,
       registered: registered,
     } as UserResponse);

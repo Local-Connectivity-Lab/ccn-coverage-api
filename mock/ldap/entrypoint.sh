@@ -51,7 +51,7 @@ echo "Preconfiguring slapd"
 debconf-set-selections <<EOF
 slapd slapd/password1 password ${LDAP_ADMIN_PASSWORD}
 slapd slapd/password2 password ${LDAP_ADMIN_PASSWORD}
-slapd slapd/domain string ${LDAP_DOMAIN}
+slapd slapd/domain string seattlecommunitynetwork.org
 slapd shared/organization string ${LDAP_ORGANISATION}
 slapd slapd/backend select MDB
 slapd slapd/purge_database boolean true
@@ -67,32 +67,60 @@ DEBIAN_FRONTEND=noninteractive dpkg-reconfigure slapd
 # Make sure permissions are correct
 chown -R openldap:openldap /var/lib/ldap /etc/ldap/slapd.d
 
-# Convert domain to LDAP base DN
-LDAP_BASE_DN=$(echo "$LDAP_DOMAIN" | sed 's/\./,dc=/g' | sed 's/^/dc=/')
-echo "LDAP_BASE_DN: $LDAP_BASE_DN"
+# The base DN that was created based on our domain
+DOMAIN_BASE_DN="dc=seattlecommunitynetwork,dc=org"
+echo "DOMAIN_BASE_DN: $DOMAIN_BASE_DN"
+
+# The target structure we want to create
+LDAP_BASE_DN="dc=cloud,dc=seattlecommunitynetwork,dc=org"
+echo "Final LDAP_BASE_DN we want: $LDAP_BASE_DN"
 
 # Start slapd temporarily for configuration
 echo "Starting slapd for configuration"
 slapd -h "ldapi:///" -u openldap -g openldap
 sleep 3
 
-echo $LDAP_BASE_DN
+# First create the dc=cloud component
+echo "Creating cloud DC component"
+cat > /tmp/cloud_dc.ldif << EOF
+dn: dc=cloud,${DOMAIN_BASE_DN}
+objectClass: dcObject
+objectClass: organization
+o: Cloud Domain
+dc: cloud
+EOF
 
-# Add people and groups OUs if they don't exist yet
-echo "Creating people and groups OUs"
+ldapadd -x -H ldapi:/// -D "cn=admin,${DOMAIN_BASE_DN}" -w "${LDAP_ADMIN_PASSWORD}" -f /tmp/cloud_dc.ldif || echo "DC cloud may already exist, continuing"
+sleep 2
+
+# Create the accounts container and users/groups containers
+echo "Creating accounts, users and groups containers"
 cat > /tmp/structure.ldif << EOF
-dn: ou=people,${LDAP_BASE_DN}
-objectClass: organizationalUnit
-ou: people
+# Create accounts container
+dn: cn=accounts,${LDAP_BASE_DN}
+objectClass: organizationalRole
+objectClass: top
+cn: accounts
+description: Accounts container
 
-dn: ou=groups,${LDAP_BASE_DN}
-objectClass: organizationalUnit
-ou: groups
+# Create users container
+dn: cn=users,cn=accounts,${LDAP_BASE_DN}
+objectClass: organizationalRole
+objectClass: top
+cn: users
+description: Users container
+
+# Create groups container
+dn: cn=groups,cn=accounts,${LDAP_BASE_DN}
+objectClass: organizationalRole
+objectClass: top
+cn: groups
+description: Groups container
 EOF
 
 cat > /tmp/users.ldif << EOF
 # Define test_user1
-dn: uid=test_user1,ou=people,${LDAP_BASE_DN}
+dn: uid=test_user1,cn=users,cn=accounts,${LDAP_BASE_DN}
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -101,11 +129,11 @@ cn: Test User1
 sn: User1
 uid: test_user1
 userPassword: test123
-mail: test_user1@seattlecommunitynetwork.org.org
+mail: test_user1@seattlecommunitynetwork.org
 givenName: Test
 
 # Define test_user2
-dn: uid=test_user2,ou=people,${LDAP_BASE_DN}
+dn: uid=test_user2,cn=users,cn=accounts,${LDAP_BASE_DN}
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -114,18 +142,18 @@ cn: Test User2
 sn: User2
 uid: test_user2
 userPassword: test123
-mail: test_user2@seattlecommunitynetwork.org.org
+mail: test_user2@seattlecommunitynetwork.org
 givenName: Test
 EOF
 
 sleep 5
 
-ldapadd -x -H ldapi:/// -D "cn=admin,${LDAP_BASE_DN}" -w "${LDAP_ADMIN_PASSWORD}" -f /tmp/structure.ldif || echo "OUs already exist, skipping"
+ldapadd -x -H ldapi:/// -D "cn=admin,${DOMAIN_BASE_DN}" -w "${LDAP_ADMIN_PASSWORD}" -f /tmp/structure.ldif || echo "Containers already exist, skipping"
 
 # Import users if they exist
 if [ -f /tmp/users.ldif ]; then
     echo "Importing users"
-    ldapadd -x -H ldapi:/// -D "cn=admin,${LDAP_BASE_DN}" -w "${LDAP_ADMIN_PASSWORD}" -f /tmp/users.ldif || echo "Users may already exist, skipping"
+    ldapadd -x -H ldapi:/// -D "cn=admin,${DOMAIN_BASE_DN}" -w "${LDAP_ADMIN_PASSWORD}" -f /tmp/users.ldif || echo "Users may already exist, skipping"
 fi
 
 # Stop slapd
