@@ -36,14 +36,15 @@ const measurementSchema = new mongoose.Schema(
   },
 );
 
+measurementSchema.statics.build = (attr: IMeasurement) => {
+  // TODO: Add timestamp verification
+  return new MeasurementData(attr);
+};
+
 const MeasurementData = mongoose.model<
   MeasurementDoc,
   MeasurementModelInterface
 >('Measurement', measurementSchema);
 
-measurementSchema.statics.build = (attr: IMeasurement) => {
-  // TODO: Add timestamp verification
-  return new MeasurementData(attr);
-};
 
 export { MeasurementData, IMeasurement, MeasurementDoc };

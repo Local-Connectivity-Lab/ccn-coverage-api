@@ -10,28 +10,30 @@ function runIfAuthenticated(req: Request, res: Response, next: any) {
   const hpkr = Buffer.from(req.body.h_pkr, 'hex');
   const signature = Buffer.from(req.body.sigma_m, 'hex');
   const message = Buffer.from(req.body.M, 'hex');
-  User.findOne(
-    { identity: req.body.h_pkr.toLowerCase() },
-    (err: any, user: any) => {
-      if (err || !user) {
+  User.findOne({ identity: req.body.h_pkr.toLowerCase() })
+    .then((user) => {
+      if (!user) {
         res.status(401).send('user not found');
         logger.debug('User not found');
         return false;
-      } else {
-        const pkt = Crypto.createPublicKey({
-          key: Buffer.from(user.publicKey, 'hex'),
-          format: 'der',
-          type: 'spki',
-        });
-        if (!Crypto.verify('sha256', message, pkt, signature)) {
-          res.status(403).send('invalid signature');
-          logger.debug('Invalid signature');
-          return false;
-        }
-        return next(req, res);
       }
-    },
-  );
+      const pkt = Crypto.createPublicKey({
+        key: Buffer.from(user.publicKey, 'hex'),
+        format: 'der',
+        type: 'spki',
+      });
+      if (!Crypto.verify('sha256', message, pkt, signature)) {
+        res.status(403).send('invalid signature');
+        logger.debug('Invalid signature');
+        return false;
+      }
+      return next(req, res);
+    })
+    .catch((err: any) => {
+      res.status(401).send('user not found');
+      logger.debug(`User not found: ${err}`);
+      return false;
+    });
 }
 
 const reportSignal = (req: Request, res: Response) => {
@@ -95,6 +97,7 @@ router.post('/api/report_signal', (req: Request, res: Response) => {
     res.status(400).send('bad request');
     return;
   }
+  logger.debug('report_signal');
   runIfAuthenticated(req, res, reportSignal);
 });
 
@@ -103,6 +106,7 @@ router.post('/api/report_measurement', (req: Request, res: Response) => {
     res.status(400).send('bad request');
     return;
   }
+  logger.debug('report_measurement');
   runIfAuthenticated(req, res, reportMeasurement);
 });
 

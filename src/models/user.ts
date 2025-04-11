@@ -58,11 +58,12 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-const User = mongoose.model<UserDoc, UserModelInterface>('User', userSchema);
-
 userSchema.statics.build = (attr: IUser) => {
   // TODO: Add timestamp verification
   return new User(attr);
 };
+
+const User = mongoose.model<UserDoc, UserModelInterface>('User', userSchema);
+
 
 export { User, IUser, UserDoc };
