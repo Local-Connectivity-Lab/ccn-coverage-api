@@ -1,6 +1,6 @@
 services:
-  ccn-coverage-api:
-    container_name: ccn-coverage-api
+  api:
+    container_name: api
     image: ccn-coverage-api:latest
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
       - ldap
     restart: unless-stopped
     networks:
-      - app-network
+      - coverage-app-network
 
   mongodb:
     container_name: mongodb
@@ -25,7 +25,7 @@ services:
       - ${PWD}/mock/mongo:/docker-entrypoint-initdb.d
     restart: unless-stopped
     networks:
-      - app-network
+      - coverage-app-network
   
   ldap:
     build: ./mock/ldap
@@ -43,7 +43,7 @@ services:
       - ldap_config:/etc/ldap/slapd.d
     restart: unless-stopped
     networks:
-      - app-network
+      - coverage-app-network
 
 volumes:
   mongo-data-db:
@@ -52,5 +52,5 @@ volumes:
   ldap_config:
 
 networks:
-  app-network:
+  coverage-app-network:
     driver: bridge

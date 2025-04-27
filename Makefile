@@ -1,5 +1,7 @@
 # Name of the Docker container
 DOCKER_IMAGE=node:22-slim
+API_DOCKER_IMAGE_NAME_PREFIX=ghcr.io/local-connectivity-lab
+API_DOCKER_IMAGE_NAME=ccn-coverage-api
 
 # The current directory (mapped to the container)
 CURRENT_DIR=$(shell pwd)
@@ -12,8 +14,8 @@ clean:
 
 .PHONY: build
 build:
-	@echo "Create docker container"
-	docker build -t ccn-coverage-api .
+	@echo "Create docker container for $(API_DOCKER_IMAGE_NAME)"
+	docker build -t $(API_DOCKER_IMAGE_NAME_PREFIX)/$(API_DOCKER_IMAGE_NAME) .
 
 # The target for development
 .PHONY: dev

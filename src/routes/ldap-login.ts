@@ -99,6 +99,6 @@ router.get('/api/logout', (req: Request, res: Response) => {
       res.status(500).send('logout failed');
       return;
     }
-    res.status(200).send('logged out');
+    res.status(200).json('logged out');
   });
 });
