@@ -15,6 +15,10 @@ We provide a development docker image for consistent developing environment. You
 
 The project uses `Node.js` and `TypeScript` for most of the components.
 
+Avoid committing your change directly to the `main` branch. Check out your own private branch for your development and submit a pull request when the feature/bug fix/cleanup is ready for review. Follow the [Angular Commit Message Conventions](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) for your commit message. Versions will be managed based on those commit messages. 
+
+Refer to our [development guide](DEVELOPMENT.md) for more information.
+
 ## Testing
 We use `docker compose` to mock other components in the system, i.e. LDAP for authentication and MongoDB with mock data. 
 Run `docker compose up` to run the whole system. The main API service is running under port 3000, which is also exposed to the host machine.
