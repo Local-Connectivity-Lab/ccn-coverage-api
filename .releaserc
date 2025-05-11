@@ -23,7 +23,7 @@
     ],
     "prepare": [
         "@semantic-release/changelog",
-        "./publish-docker.js",
+        "./scripts/publish-docker.js",
         "@semantic-release/git"
     ]
 }
