@@ -1,8 +1,6 @@
 import express, { Request, Response } from 'express';
 import * as Crypto from 'crypto';
-import fs from 'fs';
-import { User, IUser } from '../models/user';
-import { IRegisterRequest, AuthenticationMessage } from '../../models/register';
+import { User } from '../models/user';
 import date from 'date-and-time';
 
 const router = express.Router();

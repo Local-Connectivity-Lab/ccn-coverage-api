@@ -1,0 +1,45 @@
+services:
+    
+  vis:
+    container_name: vis
+    image: ghcr.io/local-connectivity-lab/ccn-coverage-vis:latest
+    ports:
+      - "8090:80"
+    depends_on:
+      - api
+    networks:
+      - coverage-app-network
+
+  api:
+    container_name: api
+    image:  ghcr.io/local-connectivity-lab/ccn-coverage-api:latest
+    ports:
+      - "8091:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/api-data
+      - LDAP_URI=ldap://10.0.1.4:389
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - coverage-app-network
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data-db:/data/db
+      - mongo-data-configdb:/data/configdb
+    restart: unless-stopped
+    networks:
+      - coverage-app-network
+
+volumes:
+  mongo-data-db:
+  mongo-data-configdb:
+
+networks:
+  coverage-app-network:
+    driver: bridge

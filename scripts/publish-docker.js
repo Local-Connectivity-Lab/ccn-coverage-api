@@ -8,7 +8,7 @@ export default async (pluginConfig, context) => {
 
     console.log(`Building Docker image: ${imageName}:${version}`);
 
-    execSync('make build', { stdio: 'inherit' });
+    execSync(`make build-${version}`, { stdio: 'inherit' });
     execSync(`docker tag ${imageName}:${version} ${imageName}:latest`, { stdio: 'inherit' });
     execSync(`docker push ${imageName}:${version}`, { stdio: 'inherit' });
     execSync(`docker push ${imageName}:latest`, { stdio: 'inherit' });
