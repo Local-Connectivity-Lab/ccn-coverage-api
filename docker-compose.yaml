@@ -7,6 +7,8 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/api-data
       - LDAP_URI=ldap://ldap:389
+    volumes:
+      - ./keys/:/app/keys
     depends_on:
       - mongodb
       - ldap
