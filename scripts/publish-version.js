@@ -98,18 +98,14 @@ export default async (pluginConfig, context) => {
         // --- 8. Merge the Pull Request ---
         logger.log(`Attempting to merge Pull Request #${pr.number}`);
         try {
-            if (pr.mergeable) {
-                await octokit.rest.pulls.merge({
-                    owner: umbrellaRepoOwner,
-                    repo: umbrellaRepoName,
-                    pull_number: pr.number,
-                    commit_title: `${commitMessage} (PR #${pr.number})`,
-                    merge_method: 'squash',
-                });
-                logger.log(`Pull Request #${pr.number} merged successfully.`);
-            } else {
-                logger.warn(`Pull Request #${pr.number} is not mergeable. It might require manual intervention.`);
-            }
+            await octokit.rest.pulls.merge({
+                owner: umbrellaRepoOwner,
+                repo: umbrellaRepoName,
+                pull_number: pr.number,
+                commit_title: `${commitMessage} (PR #${pr.number})`,
+                merge_method: 'squash',
+            });
+            logger.log(`Pull Request #${pr.number} merged successfully.`);
         } catch (mergeError) {
             logger.error(`Failed to merge PR #${pr.number}: ${mergeError.message}`);
             logger.error(`Details: ${JSON.stringify(mergeError.response?.data, null, 2)}`);
