@@ -25,7 +25,7 @@ jobs:
 
       - name: Run semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           REPO_OWNER: "Local-Connectivity-Lab"
           REPO_NAME: "ccn-coverage-docker"
           TARGET_ARTIFACT_NAME: "ccn-coverage-api"
