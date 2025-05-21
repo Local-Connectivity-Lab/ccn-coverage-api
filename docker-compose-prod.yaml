@@ -19,7 +19,7 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/api-data
       - LDAP_URI=ldap://10.0.1.4:389
     volumes:
-      - ./keys/:/app/keys
+      - ./keys/:/usr/src/app/keys/
     depends_on:
       - mongodb
     restart: unless-stopped
