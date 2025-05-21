@@ -1,7 +1,8 @@
 export default {
   ldap: {
     dn: 'cn=users,cn=accounts,dc=cloud,dc=seattlecommunitynetwork,dc=org',
-    url: 'ldap://10.0.1.4'
+    url: process.env.LDAP_URI || 'ldap://ldap:389',
   },
-  mongodbURI : 'mongodb://localhost:27017/api-data',
-}
+  mongodbURI: process.env.MONGODB_URI || 'mongodb://mongodb:27017/api-data',
+  secureCookie: process.env.SAVE_COOKIE === 'true',
+};
