@@ -21,7 +21,7 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install --include=dev --omit=prod
+        run: npm install --include=dev
 
       - name: Run semantic-release
         env:

@@ -33,7 +33,7 @@ export default async (pluginConfig, context) => {
         throw new Error(`Missing GitHub token.`);
     }
 
-    const octokit = new Octokit({ auth: githubToken });
+    const octokit = new Octokit({ auth: GH_TOKEN });
     const umbrellaRepoUrl = `https://github.com/${umbrellaRepoOwner}/${umbrellaRepoName}.git`;
     const localRepoPath = path.resolve(`./tmp-umbrella-repo-${Date.now()}`); // Temporary local path for clone
 
@@ -47,7 +47,7 @@ export default async (pluginConfig, context) => {
         logger.log(`Cloning ${umbrellaRepoUrl} to ${localRepoPath}`);
 
         // // --- 1. Clone the umbrella repository ---
-        const authenticatedUrl = `https://x-access-token:${githubToken}@github.com/${umbrellaRepoOwner}/${umbrellaRepoName}.git`;
+        const authenticatedUrl = `https://x-access-token:${GH_TOKEN}@github.com/${umbrellaRepoOwner}/${umbrellaRepoName}.git`;
         execSync(`git clone --depth 1 --branch ${baseBranch} ${authenticatedUrl} ${localRepoPath}`, { stdio: 'inherit' });
 
         // // --- 2. Configure Git User ---
