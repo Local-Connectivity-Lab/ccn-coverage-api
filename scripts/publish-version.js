@@ -22,7 +22,7 @@ export default async (pluginConfig, context) => {
 
     const umbrellaRepoOwner = REPO_OWNER || "Local-Connectivity-Lab";
     const umbrellaRepoName = REPO_NAME || "ccn-coverage-docker";
-    const manifestPath = "./input-manifest.yml";
+    const manifestPath = "input-manifest.yml";
     const targetArtifactName = TARGET_ARTIFACT_NAME || "ccn-coverage-api";
     const baseBranch = 'main';
     const gitUserName = GIT_COMMITTER_NAME || 'scn-git';

@@ -1,6 +1,5 @@
 # Name of the Docker container
 DOCKER_IMAGE=node:22-slim
-API_DOCKER_IMAGE_NAME_PREFIX=ghcr.io/local-connectivity-lab
 API_DOCKER_IMAGE_NAME=ccn-coverage-api
 
 # The current directory (mapped to the container)
@@ -23,13 +22,13 @@ validate-semver-%:
 .PHONY: build
 build:
 	@echo "Create docker container for $(API_DOCKER_IMAGE_NAME)"
-	docker build -t $(API_DOCKER_IMAGE_NAME_PREFIX)/$(API_DOCKER_IMAGE_NAME) .
+	docker build -t $(API_DOCKER_IMAGE_NAME) .
 
 
 # Build with specific version (e.g., make build-1.2.3)
 build-%: validate-semver-%
 	@echo "Create docker container for $(API_DOCKER_IMAGE_NAME) with version $*"
-	docker build -t $(API_DOCKER_IMAGE_NAME_PREFIX)/$(API_DOCKER_IMAGE_NAME):$* .
+	docker build -t $(API_DOCKER_IMAGE_NAME):$* .
 
 # The target for development
 .PHONY: dev
