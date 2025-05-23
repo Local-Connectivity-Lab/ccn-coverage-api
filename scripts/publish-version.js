@@ -18,15 +18,15 @@ function updateNestedField(obj, targetArtifactName, value) {
 export default async (pluginConfig, context) => {
     const { nextRelease, logger, env } = context;
     const newVersion = nextRelease.version;
-    const { GH_TOKEN, REPO_OWNER, REPO_NAME, TARGET_ARTIFACT_NAME } = env;
+    const { GH_TOKEN, REPO_OWNER, REPO_NAME, TARGET_ARTIFACT_NAME, GIT_COMMITTER_NAME, GIT_COMMITTER_EMAIL } = env;
 
     const umbrellaRepoOwner = REPO_OWNER || "Local-Connectivity-Lab";
     const umbrellaRepoName = REPO_NAME || "ccn-coverage-docker";
     const manifestPath = "./input-manifest.yml";
     const targetArtifactName = TARGET_ARTIFACT_NAME || "ccn-coverage-api";
     const baseBranch = 'main';
-    const gitUserName = 'scn-git';
-    const gitUserEmail = 'github@seattlecommunitynetwork.org';
+    const gitUserName = GIT_COMMITTER_NAME || 'scn-git';
+    const gitUserEmail = GIT_COMMITTER_EMAIL || 'github@seattlecommunitynetwork.org';
 
     if (!GH_TOKEN) {
         logger.error(`GitHub token not found in environment variable.`);
