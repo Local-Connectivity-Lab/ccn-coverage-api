@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.0.0...v1.0.1) (2025-05-23)
+
+
+### Bug Fixes
+
+* fix ci action comitter name and email ([#9](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/9)) ([8ed09da](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/8ed09dafd4882e336b261c83ac780fdada0b5c71))
+
 # 1.0.0 (2025-05-22)
 
 
