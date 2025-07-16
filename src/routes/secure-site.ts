@@ -9,7 +9,7 @@ type Site = components['schemas']['Site'];
 
 
 router.put(
-  'api/secure-site',
+  '/api/secure-site',
 //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
@@ -40,7 +40,7 @@ router.put(
 
 
 router.post(
-  'api/secure-site',
+  '/api/secure-site',
 //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
@@ -62,7 +62,7 @@ router.post(
 
 
 router.delete(
-  'api/secure-site',
+  '/api/secure-site',
 //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
