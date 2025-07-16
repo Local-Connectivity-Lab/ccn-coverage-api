@@ -11,6 +11,7 @@ import { ldapRouter } from './routes/ldap-login';
 import { newUserRouter } from './routes/new-user';
 import { usersRouter } from './routes/users';
 import { editSitesRouter } from './routes/edit-sites';
+import { secureDataRouter } from './routes/secure-site';
 import logger from './logger';
 import cors from 'cors';
 
@@ -72,6 +73,7 @@ app.use(ldapRouter);
 app.use(newUserRouter);
 app.use(usersRouter);
 app.use(editSitesRouter);
+app.use(secureDataRouter);
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
