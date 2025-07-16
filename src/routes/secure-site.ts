@@ -87,4 +87,4 @@ router.delete(
   }
 );
 
-export { router as secureDataRouter };
+export { router as secureSitesRouter };
