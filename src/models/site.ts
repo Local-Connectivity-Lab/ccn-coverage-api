@@ -46,14 +46,15 @@ const siteSchema = new mongoose.Schema(
         validator: function (val: number[][]) {
           return val.every(pair => pair.length === 2);
         },
-        message: 'Each boundary coordinate must be a pair of [latitude, longitude]',
+        message:
+          'Each boundary coordinate must be a pair of [latitude, longitude]',
       },
       required: false,
     },
   },
   {
     versionKey: false,
-  }
+  },
 );
 
 siteSchema.statics.build = (attr: ISite) => {

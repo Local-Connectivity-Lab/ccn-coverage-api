@@ -5,16 +5,15 @@ import { components } from '../types/schema';
 
 const router = express.Router();
 
-type Site = components['schemas']['Site'];
-
+type SiteRequest = components['schemas']['Site'];
 
 router.put(
   '/api/secure-site',
-//   connectEnsureLogin.ensureLoggedIn('/api/failure'),
+  //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
-      const siteData: Site = req.body;
-      
+      const siteData: SiteRequest = req.body;
+
       if (!siteData.name) {
         res.status(400).json({ error: 'Site name is required' });
         return;
@@ -23,7 +22,7 @@ router.put(
       const updatedSite = await Site.findOneAndUpdate(
         { name: siteData.name },
         siteData,
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!updatedSite) {
@@ -31,43 +30,43 @@ router.put(
         return;
       }
 
-      res.status(200).json(updatedSite);
+      res.status(200).json({ message: 'Site updated successfully' });
     } catch (error: any) {
       res.status(500).json({ error: 'Internal server error' });
     }
-  }
+  },
 );
-
 
 router.post(
   '/api/secure-site',
-//   connectEnsureLogin.ensureLoggedIn('/api/failure'),
+  //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
-      const siteData: Site = req.body;
-      
+      const siteData: SiteRequest = req.body;
+
       const newSite = Site.build(siteData);
       const savedSite = await newSite.save();
 
       res.status(201).json(savedSite);
     } catch (error: any) {
       if (error.name === 'ValidationError') {
-        res.status(400).json({ error: 'Validation error', details: error.message });
+        res
+          .status(400)
+          .json({ error: 'Validation error', details: error.message });
         return;
       }
       res.status(500).json({ error: 'Internal server error' });
     }
-  }
+  },
 );
-
 
 router.delete(
   '/api/secure-site',
-//   connectEnsureLogin.ensureLoggedIn('/api/failure'),
+  //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
   async (req: Request, res: Response) => {
     try {
-      const siteData: Site = req.body;
-      
+      const siteData: SiteRequest = req.body;
+
       if (!siteData.name) {
         res.status(400).json({ error: 'Site name is required' });
         return;
@@ -80,11 +79,13 @@ router.delete(
         return;
       }
 
-      res.status(200).json({ message: 'Site deleted successfully', site: deletedSite });
+      res
+        .status(200)
+        .json({ message: 'Site deleted successfully', site: deletedSite });
     } catch (error: any) {
       res.status(500).json({ error: 'Internal server error' });
     }
-  }
+  },
 );
 
 export { router as secureSitesRouter };

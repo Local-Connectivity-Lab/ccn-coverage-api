@@ -6,9 +6,9 @@ const router = express.Router();
 router.get('/api/public-sites', async (req: Request, res: Response) => {
   try {
     const sites = await Site.find();
-    
+
     res.status(200).json({
-      sites: sites
+      sites: sites,
     });
   } catch (error) {
     console.error('Error retrieving public sites:', error);
