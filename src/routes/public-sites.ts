@@ -3,7 +3,7 @@ import { Site } from '../models/site';
 
 const router = express.Router();
 
-router.get('/api/sites', async (req: Request, res: Response) => {
+router.get('/api/public-sites', async (req: Request, res: Response) => {
   try {
     const sites = await Site.find();
 
