@@ -7,6 +7,7 @@ const router = express.Router();
 
 type SiteRequest = components['schemas']['Site'];
 
+// Edit an existing site
 router.put(
   '/api/secure-site',
   //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
@@ -37,6 +38,7 @@ router.put(
   },
 );
 
+// Create a new site
 router.post(
   '/api/secure-site',
   //   connectEnsureLogin.ensureLoggedIn('/api/failure'),
@@ -60,6 +62,7 @@ router.post(
   },
 );
 
+// Delete an existing site
 router.delete(
   '/api/secure-site',
   //   connectEnsureLogin.ensureLoggedIn('/api/failure'),

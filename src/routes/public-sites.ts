@@ -3,6 +3,7 @@ import { Site } from '../models/site';
 
 const router = express.Router();
 
+// Get list of all sites from database
 router.get('/api/public-sites', async (req: Request, res: Response) => {
   try {
     const sites = await Site.find();
