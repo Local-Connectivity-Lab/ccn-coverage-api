@@ -18,10 +18,22 @@ const siteSchema = new mongoose.Schema(
     latitude: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (latitude: number) {
+          return latitude >= -90 && latitude <= 90;
+        },
+        message: 'Latitude must be between -90 and 90 degrees',
+      },
     },
     longitude: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (longitude: number) {
+          return longitude >= -180 && longitude <= 180;
+        },
+        message: 'Longitude must be between -180 and 180 degrees',
+      },
     },
     status: {
       type: String,
