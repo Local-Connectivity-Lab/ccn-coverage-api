@@ -4,13 +4,11 @@ import { Site } from '../models/site';
 const router = express.Router();
 
 // Get list of all sites from database
-router.get('/api/public-sites', async (req: Request, res: Response) => {
+router.get('/api/sites', async (req: Request, res: Response) => {
   try {
     const sites = await Site.find();
 
-    res.status(200).json({
-      sites: sites,
-    });
+    res.status(200).json(sites);
   } catch (error) {
     console.error('Error retrieving public sites:', error);
     res.status(500).send('Internal server error');
