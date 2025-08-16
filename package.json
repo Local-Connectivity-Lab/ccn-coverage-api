@@ -7,12 +7,16 @@
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
     "@types/leaflet": "^1.7.5",
+    "@types/mocha": "^10.0.10",
     "@types/passport": "^1.0.17",
     "copyfiles": "^2.4.1",
     "js-yaml": "^4.1.0",
     "jsdom-global": "3.0.2",
+    "mocha": "^11.7.1",
+    "node-mocks-http": "^1.17.2",
     "prettier": "^3.5.3",
     "semantic-release": "^24.2.4",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
@@ -46,6 +50,7 @@
     "build": "tsc -p tsconfig.json && copyfiles -f ./src/models/*.json ./build/src/models",
     "start-built": "node ./build/src/index.js",
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\"",
+    "test": "mocha -r ts-node/register 'src/test/**/*.test.ts'"
   }
 }
