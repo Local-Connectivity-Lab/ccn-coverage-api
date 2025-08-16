@@ -36,3 +36,6 @@ jobs:
           REPO_NAME: "ccn-coverage-docker"
           TARGET_ARTIFACT_NAME: "ccn-coverage-api"
         run: npx semantic-release
+
+      - name: Run tests
+        run: npm run test
