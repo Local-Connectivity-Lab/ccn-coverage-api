@@ -415,26 +415,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/old-sites': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all sites
-     * @description Returns a list of all available sites with their location and status information
-     */
-    get: operations['getSitesOld'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/sites': {
     parameters: {
       query?: never;
@@ -1906,26 +1886,6 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
-      };
-    };
-  };
-  getSitesOld: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of sites */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['Site'][];
-        };
       };
     };
   };
