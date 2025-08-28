@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { Site } from '../models/site';
 // import connectEnsureLogin from 'connect-ensure-login';
 import { components } from '../types/schema';
+import connectEnsureLogin from 'connect-ensure-login';
 
 const router = express.Router();
 
@@ -79,8 +80,20 @@ export const deleteSecureSite = async (req: Request, res: Response) => {
   }
 };
 
-router.put('/api/secure-site', putSecureSite);
-router.post('/api/secure-site', postSecureSite);
-router.delete('/api/secure-site', deleteSecureSite);
+router.put(
+  '/secure/edit-sites',
+  connectEnsureLogin.ensureLoggedIn(),
+  putSecureSite,
+);
+router.post(
+  '/secure/edit-sites',
+  connectEnsureLogin.ensureLoggedIn(),
+  postSecureSite,
+);
+router.delete(
+  '/secure/edit-sites',
+  connectEnsureLogin.ensureLoggedIn(),
+  deleteSecureSite,
+);
 
 export { router as secureSitesRouter };

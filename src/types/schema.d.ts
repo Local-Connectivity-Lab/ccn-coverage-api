@@ -1075,7 +1075,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/secure-site': {
+  '/secure/edit-sites': {
     parameters: {
       query?: never;
       header?: never;
