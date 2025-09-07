@@ -2,7 +2,7 @@ services:
     
   vis:
     container_name: vis
-    image: ghcr.io/local-connectivity-lab/ccn-coverage-vis:latest
+    image: ccn-coverage-vis:latest
     ports:
       - "8090:80"
     depends_on:
@@ -12,7 +12,7 @@ services:
 
   api:
     container_name: api
-    image:  ghcr.io/local-connectivity-lab/ccn-coverage-api:latest
+    image:  ccn-coverage-api:latest
     ports:
       - "8091:3000"
     environment:

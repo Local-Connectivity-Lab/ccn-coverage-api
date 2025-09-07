@@ -46,5 +46,4 @@ const MeasurementData = mongoose.model<
   MeasurementModelInterface
 >('Measurement', measurementSchema);
 
-
 export { MeasurementData, IMeasurement, MeasurementDoc };

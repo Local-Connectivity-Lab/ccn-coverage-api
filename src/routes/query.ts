@@ -67,10 +67,6 @@ function updateSite() {
     return JSON.parse(fs.readFileSync(defaultModelJsonPath).toString());
   }
 }
-router.get('/api/sites', (_, res: Response) => {
-  sites = updateSite();
-  res.send(sites);
-});
 
 router.get('/api/dataRange', (_, res) => {
   res.send(dataRange);
