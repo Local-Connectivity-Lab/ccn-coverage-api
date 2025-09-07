@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { Site } from '../models/site';
-// import connectEnsureLogin from 'connect-ensure-login';
 import { components } from '../types/schema';
 import connectEnsureLogin from 'connect-ensure-login';
 
