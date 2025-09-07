@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.0.1...v1.1.0) (2025-09-07)
+
+
+### Features
+
+* add site management endpoints ([#11](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/11)) ([21ecd57](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/21ecd571b60c261658077441de543c715b641d7a))
+
 ## [1.0.1](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.0.0...v1.0.1) (2025-05-23)
 
 
