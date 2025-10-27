@@ -9,7 +9,7 @@ import { Site } from '../models/site';
 
 describe('secure-site event handlers', function () {
   describe('PUT /api/secure-site', function () {
-    it('400 if name missing', async function () {
+    it('400 if identity missing', async function () {
       const req = httpMocks.createRequest({ method: 'PUT', body: {} });
       const res = httpMocks.createResponse();
 
@@ -17,7 +17,7 @@ describe('secure-site event handlers', function () {
 
       assert.strictEqual(res._getStatusCode(), 400);
       assert.deepStrictEqual(res._getJSONData(), {
-        error: 'Site name is required',
+        error: 'Site identity is required',
       });
     });
 
@@ -26,7 +26,7 @@ describe('secure-site event handlers', function () {
 
       const req = httpMocks.createRequest({
         method: 'PUT',
-        body: { name: 'X' },
+        body: { identity: 'test-identity' },
       });
       const res = httpMocks.createResponse();
 
@@ -41,7 +41,7 @@ describe('secure-site event handlers', function () {
 
       const req = httpMocks.createRequest({
         method: 'PUT',
-        body: { name: 'X' },
+        body: { identity: 'test-identity', name: 'X' },
       });
       const res = httpMocks.createResponse();
 
@@ -60,7 +60,7 @@ describe('secure-site event handlers', function () {
 
       const req = httpMocks.createRequest({
         method: 'PUT',
-        body: { name: 'X' },
+        body: { identity: 'test-identity', name: 'X' },
       });
       const res = httpMocks.createResponse();
 
@@ -86,9 +86,10 @@ describe('secure-site event handlers', function () {
       await postSecureSite(req, res);
 
       assert.strictEqual(res._getStatusCode(), 201);
-      assert.deepStrictEqual(res._getJSONData(), {
-        message: 'Site created successfully',
-      });
+      // The actual identity value will be a SHA256 hash of the name
+      const response = res._getJSONData();
+      assert.strictEqual(response.message, 'Site created successfully');
+      assert.ok(response.identity && typeof response.identity === 'string');
     });
 
     it('400 on validation error', async function () {
@@ -136,15 +137,18 @@ describe('secure-site event handlers', function () {
   });
 
   describe('DELETE /api/secure-site', function () {
-    it('400 if name missing', async function () {
-      const req = httpMocks.createRequest({ method: 'DELETE', body: {} });
+    it('400 if identity missing', async function () {
+      const req = httpMocks.createRequest({
+        method: 'DELETE',
+        body: { identity: '' },
+      });
       const res = httpMocks.createResponse();
 
       await deleteSecureSite(req, res);
 
       assert.strictEqual(res._getStatusCode(), 400);
       assert.deepStrictEqual(res._getJSONData(), {
-        error: 'Site name is required',
+        error: 'Site identity is required',
       });
     });
 
@@ -153,7 +157,7 @@ describe('secure-site event handlers', function () {
 
       const req = httpMocks.createRequest({
         method: 'DELETE',
-        body: { name: 'X' },
+        body: { identity: 'test-identity' },
       });
       const res = httpMocks.createResponse();
 
@@ -164,11 +168,14 @@ describe('secure-site event handlers', function () {
     });
 
     it('200 on success', async function () {
-      (Site.findOneAndDelete as any) = async () => ({ name: 'X' });
+      (Site.findOneAndDelete as any) = async () => ({
+        identity: 'test-identity',
+        name: 'X',
+      });
 
       const req = httpMocks.createRequest({
         method: 'DELETE',
-        body: { name: 'X' },
+        body: { identity: 'test-identity' },
       });
       const res = httpMocks.createResponse();
 
@@ -177,7 +184,10 @@ describe('secure-site event handlers', function () {
       assert.strictEqual(res._getStatusCode(), 200);
       assert.deepStrictEqual(res._getJSONData(), {
         message: 'Site deleted successfully',
-        site: { name: 'X' },
+        site: {
+          identity: 'test-identity',
+          name: 'X',
+        },
       });
     });
 
@@ -188,7 +198,7 @@ describe('secure-site event handlers', function () {
 
       const req = httpMocks.createRequest({
         method: 'DELETE',
-        body: { name: 'X' },
+        body: { identity: 'test-identity' },
       });
       const res = httpMocks.createResponse();
 

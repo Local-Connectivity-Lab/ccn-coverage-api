@@ -618,7 +618,6 @@ export interface paths {
      * @description Parses CSV data and stores it as both signal and measurement records.
      *     If a group is specified, any existing data with that group will be removed first.
      *     The CSV should include columns for date, time, coordinate, cell_id, dbm, ping, download_speed, and upload_speed.
-     *
      */
     post: {
       parameters: {
@@ -698,7 +697,6 @@ export interface paths {
      * @description Returns two lists:
      *     1. Registered users sorted by issue date (newest first)
      *     2. Pending users whose issue date is within the expiry display limit, sorted by issue date (newest first)
-     *
      */
     post: {
       parameters: {
@@ -825,7 +823,6 @@ export interface paths {
      *     Uses Passport LDAP strategy which binds to the LDAP server with the provided credentials.
      *     On success, creates a session and redirects to /api/success.
      *     On failure, redirects to /api/failure.
-     *
      */
     post: {
       parameters: {
@@ -937,7 +934,6 @@ export interface paths {
      * Update site configuration
      * @description Updates the sites configuration file with provided data.
      *     Requires user to be authenticated - will redirect to login page if not authenticated.
-     *
      */
     post: {
       parameters: {
@@ -1016,7 +1012,6 @@ export interface paths {
      * @description Creates a new user with a cryptographically secure identity using EC keys.
      *     Generates keypairs, creates signatures, and stores user information.
      *     Requires authentication - will redirect to login page if not authenticated.
-     *
      */
     post: {
       parameters: {
@@ -1151,7 +1146,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': components['schemas']['Site'];
+          'application/json': components['schemas']['NewSiteRequest'];
         };
       };
       responses: {
@@ -1195,7 +1190,7 @@ export interface paths {
     };
     /**
      * Delete a site
-     * @description Removes an existing site from the system
+     * @description Removes an existing site from the system using its unique identity
      */
     delete: {
       parameters: {
@@ -1206,7 +1201,13 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': components['schemas']['Site'];
+          'application/json': {
+            /**
+             * @description The unique identifier of the site to delete
+             * @example 9a8b7c6d5e4f3g2h1i
+             */
+            identity: string;
+          };
         };
       };
       responses: {
@@ -1450,6 +1451,11 @@ export interface components {
     };
     Site: {
       /**
+       * @description Unique identifier of the user to update
+       * @example 9a8b7c6d5e4f3g2h1i
+       */
+      identity: string;
+      /**
        * @description Name of the site
        * @example Filipino Community Center
        */
@@ -1487,14 +1493,55 @@ export interface components {
       /** @description Optional geographical boundary coordinates defining the site perimeter as [latitude, longitude] pairs */
       boundary?: [number, number][];
     };
-    /** @example {
+    NewSiteRequest: {
+      /**
+       * @description Name of the site
+       * @example Filipino Community Center
+       */
+      name: string;
+      /**
+       * Format: double
+       * @description Geographic latitude coordinate
+       * @example 47.681932654395915
+       */
+      latitude: number;
+      /**
+       * Format: double
+       * @description Geographic longitude coordinate
+       * @example -122.31829217664796
+       */
+      longitude: number;
+      /**
+       * @description Current status of the site
+       * @example active
+       * @enum {string}
+       */
+      status: NewSiteRequest;
+      /**
+       * @description Physical address of the site
+       * @example 5740 Martin Luther King Jr Way S, Seattle, WA 98118
+       */
+      address: string;
+      /** @description Array of cell identifiers associated with the site */
+      cell_id: string[];
+      /**
+       * @description Optional color identifier for the site in hex code
+       * @example #FF5733
+       */
+      color?: string;
+      /** @description Optional geographical boundary coordinates defining the site perimeter as [latitude, longitude] pairs */
+      boundary?: [number, number][];
+    };
+    /**
+     * @example {
      *       "Filipino Community Center": {
      *         "ping": 115.28,
      *         "download_speed": 7.16,
      *         "upload_speed": 8.63,
      *         "dbm": -78.4
      *       }
-     *     } */
+     *     }
+     */
     SitesSummary: {
       [key: string]: {
         /**
@@ -1911,6 +1958,11 @@ export interface operations {
   };
 }
 export enum SiteStatus {
+  active = 'active',
+  confirmed = 'confirmed',
+  in_conversation = 'in-conversation',
+}
+export enum NewSiteRequestStatus {
   active = 'active',
   confirmed = 'confirmed',
   in_conversation = 'in-conversation',

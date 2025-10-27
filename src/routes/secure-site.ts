@@ -2,23 +2,25 @@ import express, { Request, Response } from 'express';
 import { Site } from '../models/site';
 import { components } from '../types/schema';
 import connectEnsureLogin from 'connect-ensure-login';
+import * as crypto from 'crypto';
 
 const router = express.Router();
 
-type SiteRequest = components['schemas']['Site'];
+type EditSiteRequest = components['schemas']['Site'];
+type NewSiteRequest = components['schemas']['NewSiteRequest'];
 
 // Edit an existing site
 export const putSecureSite = async (req: Request, res: Response) => {
   try {
-    const siteData: SiteRequest = req.body;
+    const siteData: EditSiteRequest = req.body;
 
-    if (!siteData.name) {
-      res.status(400).json({ error: 'Site name is required' });
+    if (!siteData.identity) {
+      res.status(400).json({ error: 'Site identity is required' });
       return;
     }
 
     const updatedSite = await Site.findOneAndUpdate(
-      { name: siteData.name },
+      { identity: siteData.identity },
       siteData,
       { new: true, runValidators: true },
     );
@@ -35,14 +37,30 @@ export const putSecureSite = async (req: Request, res: Response) => {
 };
 
 // Create a new site
+// Summary of changes:
+// Site has all the old fields, but there is a new field called identity
+// Fill that field with
+// import * as Crypto from 'crypto';
+// Crypto.createHash('sha256')
+//             .update(skpk)
+//             .digest('hex');
 export const postSecureSite = async (req: Request, res: Response) => {
   try {
-    const siteData: SiteRequest = req.body;
+    const siteData: NewSiteRequest = req.body;
 
-    const newSite = Site.build(siteData);
+    // Generate identity using SHA256 hash
+    const skpk = siteData.name;
+    const identity = crypto.createHash('sha256').update(skpk).digest('hex');
+
+    const siteWithIdentity: EditSiteRequest = {
+      identity,
+      ...siteData,
+    };
+
+    const newSite = Site.build(siteWithIdentity);
     const savedSite = await newSite.save();
 
-    res.status(201).json({ message: 'Site created successfully' });
+    res.status(201).json({ message: 'Site created successfully', identity });
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       res
@@ -55,16 +73,17 @@ export const postSecureSite = async (req: Request, res: Response) => {
 };
 
 // Delete an existing site
+// The request should just be the string with the identity (check schema.d.ts)
 export const deleteSecureSite = async (req: Request, res: Response) => {
   try {
-    const siteData: SiteRequest = req.body;
+    const { identity } = req.body;
 
-    if (!siteData.name) {
-      res.status(400).json({ error: 'Site name is required' });
+    if (!identity) {
+      res.status(400).json({ error: 'Site identity is required' });
       return;
     }
 
-    const deletedSite = await Site.findOneAndDelete({ name: siteData.name });
+    const deletedSite = await Site.findOneAndDelete({ identity });
 
     if (!deletedSite) {
       res.status(404).json({ error: 'Site not found' });
