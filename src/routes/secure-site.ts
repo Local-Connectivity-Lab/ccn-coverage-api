@@ -37,13 +37,6 @@ export const putSecureSite = async (req: Request, res: Response) => {
 };
 
 // Create a new site
-// Summary of changes:
-// Site has all the old fields, but there is a new field called identity
-// Fill that field with
-// import * as Crypto from 'crypto';
-// Crypto.createHash('sha256')
-//             .update(skpk)
-//             .digest('hex');
 export const postSecureSite = async (req: Request, res: Response) => {
   try {
     const siteData: NewSiteRequest = req.body;
@@ -73,7 +66,6 @@ export const postSecureSite = async (req: Request, res: Response) => {
 };
 
 // Delete an existing site
-// The request should just be the string with the identity (check schema.d.ts)
 export const deleteSecureSite = async (req: Request, res: Response) => {
   try {
     const { identity } = req.body;
