@@ -42,8 +42,8 @@ export const postSecureSite = async (req: Request, res: Response) => {
     const siteData: NewSiteRequest = req.body;
 
     // Generate identity using SHA256 hash
-    const skpk = siteData.name;
-    const identity = crypto.createHash('sha256').update(skpk).digest('hex');
+    const name = siteData.name;
+    const identity = crypto.createHash('sha256').update(name).digest('hex');
 
     const siteWithIdentity: EditSiteRequest = {
       identity,
