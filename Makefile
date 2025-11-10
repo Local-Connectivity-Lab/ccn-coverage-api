@@ -30,6 +30,17 @@ build-%: validate-semver-%
 	@echo "Create docker container for $(API_DOCKER_IMAGE_NAME) with version $*"
 	docker build -t $(API_DOCKER_IMAGE_NAME):$* .
 
+# Publish to Docker registry (e.g., make publish VERSION=1.2.3)
+.PHONY: publish
+publish: validate-semver-$(VERSION)
+	@echo "Building and publishing $(API_DOCKER_IMAGE_NAME):$(VERSION)"
+	docker build -t $(API_DOCKER_IMAGE_NAME):$(VERSION) .
+	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
+	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
+	docker push icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
+	docker push icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
+	@echo "Successfully published $(API_DOCKER_IMAGE_NAME):$(VERSION) to registry"
+
 # The target for development
 .PHONY: dev
 dev:
