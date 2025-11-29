@@ -1204,7 +1204,7 @@ export interface paths {
           'application/json': {
             /**
              * @description The unique identifier of the site to delete
-             * @example 9a8b7c6d5e4f3g2h1i
+             * @example 123e4567-e89b-12d3-a456-426614174000
              */
             identity: string;
           };
@@ -1451,8 +1451,8 @@ export interface components {
     };
     Site: {
       /**
-       * @description Unique identifier of the user to update
-       * @example 9a8b7c6d5e4f3g2h1i
+       * @description Unique identifier of the site
+       * @example 123e4567-e89b-12d3-a456-426614174000
        */
       identity: string;
       /**
@@ -1484,14 +1484,14 @@ export interface components {
        */
       address: string;
       /** @description Array of cell identifiers associated with the site */
-      cell_id: string[];
+      cell_ids?: string[];
       /**
        * @description Optional color identifier for the site in hex code
        * @example #FF5733
        */
       color?: string;
       /** @description Optional geographical boundary coordinates defining the site perimeter as [latitude, longitude] pairs */
-      boundary?: [number, number][];
+      boundaries?: [number, number][];
     };
     NewSiteRequest: {
       /**
@@ -1516,21 +1516,21 @@ export interface components {
        * @example active
        * @enum {string}
        */
-      status: NewSiteRequest;
+      status: NewSiteRequestStatus;
       /**
        * @description Physical address of the site
        * @example 5740 Martin Luther King Jr Way S, Seattle, WA 98118
        */
       address: string;
       /** @description Array of cell identifiers associated with the site */
-      cell_id: string[];
+      cell_ids?: string[];
       /**
        * @description Optional color identifier for the site in hex code
        * @example #FF5733
        */
       color?: string;
       /** @description Optional geographical boundary coordinates defining the site perimeter as [latitude, longitude] pairs */
-      boundary?: [number, number][];
+      boundaries?: [number, number][];
     };
     /**
      * @example {

@@ -40,11 +40,14 @@ export const putSecureSite = async (req: Request, res: Response) => {
 export const postSecureSite = async (req: Request, res: Response) => {
   try {
     const siteData: NewSiteRequest = req.body;
+
     const identity = crypto.randomUUID();
 
     const siteWithIdentity: EditSiteRequest = {
       identity,
       ...siteData,
+      status:
+        siteData.status as unknown as components['schemas']['Site']['status'],
     };
 
     const newSite = Site.build(siteWithIdentity);
