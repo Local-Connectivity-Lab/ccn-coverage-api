@@ -11,6 +11,10 @@ interface SiteModelInterface extends mongoose.Model<SiteDoc> {
 
 const siteSchema = new mongoose.Schema(
   {
+    identity: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
