@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.2.0...v1.2.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* fix cicd ([#16](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/16)) ([2b79c71](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/2b79c713e71287cdb5140e4736a2f0b09f02525b))
+
 # [1.2.0](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.1.0...v1.2.0) (2026-11-08)
 
 
