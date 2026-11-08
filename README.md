@@ -29,19 +29,37 @@ Any contribution and pull requests are welcome! However, before you plan to impl
 ## License
 ccn-coverage-api is released under Apache License. See [LICENSE](/LICENSE) for more details.
 
+
 ## CI/CD releases
 
-Pushes and merges to `main` run the release workflow. The pipeline checks the
-application, creates a semantic-release version, builds the Docker image, and
-pushes both `<version>` and `latest` to
-`icr.infra.seattlecommunitynetwork.org`. It updates the deployment repository's
-manifest only after both image pushes succeed.
+Pushes and merges to `main` run the Release workflow: application checks followed
+by semantic-release creating a version, Git tag, and GitHub release. This workflow
+does not log in to a container registry or publish an image.
+
+A published release starts two independent workflows for its tag:
+
+- **Update deployment version** updates `input-manifest.yml` in
+  `ccn-coverage-docker`. Registry availability does not affect this update.
+- **Publish Docker image** checks out the exact release tag and pushes
+  `icr.seattlecommunitynetwork.org/<repository>:<version>`. It updates `latest`
+  only when that tag is the newest GitHub release, so retrying an older version
+  does not move `latest` backwards.
+
+Both follow-up workflows can also be started manually with an existing tag such
+as `v1.2.3`. Image publication can be retried without creating another release or
+changing the downstream version. Existing tags can be built even when their
+Makefile does not have a publish target.
+
+The downstream manifest can contain the new version before its image is available.
+Deploy that version after the image-publishing workflow succeeds.
 
 New commits receive at least a patch release; `feat:` selects a minor release and
-`BREAKING CHANGE:` selects a major release. Runs on `main` are serialized so two
-releases cannot publish concurrently. Manual runs are also supported on `main`.
-A rerun with no unreleased changes skips release/image publication.
+`BREAKING CHANGE:` selects a major release. Releases on `main` are serialized.
+A run with no unreleased changes does not create another release.
 
-Required repository settings are `GH_TOKEN` (release and deployment-repository
-access), `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and the existing
-`SCN_GIT_NAME` / `SCN_GIT_EMAIL` variables.
+Required settings are `GH_TOKEN`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and the
+existing `SCN_GIT_NAME` / `SCN_GIT_EMAIL` variables. `GH_TOKEN` must be a personal
+access token or GitHub App token that can release this repository and update the
+deployment repository. Events created using only the default `GITHUB_TOKEN` do
+not start the follow-up release workflows. See
+[GitHub's workflow-trigger documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).

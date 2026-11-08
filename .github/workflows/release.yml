@@ -16,7 +16,6 @@ jobs:
 
     permissions:
       contents: write
-      packages: write
 
     steps:
       - name: Checkout
@@ -47,33 +46,4 @@ jobs:
           GIT_AUTHOR_NAME: ${{ vars.SCN_GIT_NAME }}
           GIT_COMMITTER_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
           GIT_COMMITTER_NAME: ${{ vars.SCN_GIT_NAME }}
-          REPO_OWNER: "Local-Connectivity-Lab"
-          REPO_NAME: "ccn-coverage-docker"
-          TARGET_ARTIFACT_NAME: "ccn-coverage-api"
         run: node scripts/release.mjs
-
-      - name: Login to Docker Registry
-        if: steps.release.outputs.released == 'true'
-        uses: docker/login-action@v3
-        with:
-          registry: icr.infra.seattlecommunitynetwork.org
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-
-      - name: Build and publish Docker image
-        if: steps.release.outputs.released == 'true'
-        env:
-          VERSION: ${{ steps.release.outputs.version }}
-        run: make publish VERSION="$VERSION"
-
-      - name: Update deployment manifest
-        if: steps.release.outputs.released == 'true'
-        env:
-          VERSION: ${{ steps.release.outputs.version }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          REPO_OWNER: Local-Connectivity-Lab
-          REPO_NAME: ccn-coverage-docker
-          TARGET_ARTIFACT_NAME: ccn-coverage-api
-          GIT_COMMITTER_NAME: ${{ vars.SCN_GIT_NAME }}
-          GIT_COMMITTER_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
-        run: node scripts/update-manifest.mjs

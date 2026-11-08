@@ -1,0 +1,65 @@
+name: Update deployment version
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag, for example v1.2.3
+        required: true
+        type: string
+
+concurrency:
+  group: update-deployment-manifest
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release tag
+        id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Expected a stable release tag such as v1.2.3" >&2
+            exit 1
+          fi
+          printf 'tag=%s\nversion=%s\n' "$RELEASE_TAG" "${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout current manifest updater
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify release tag exists
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      - name: Update deployment manifest
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPO_OWNER: Local-Connectivity-Lab
+          REPO_NAME: ccn-coverage-docker
+          TARGET_ARTIFACT_NAME: ccn-coverage-api
+          GIT_COMMITTER_NAME: ${{ vars.SCN_GIT_NAME }}
+          GIT_COMMITTER_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
+        run: node scripts/update-manifest.mjs
