@@ -10,7 +10,8 @@ import logger from '../logger';
 import path from 'path';
 import { components } from '../types/schema';
 
-type Site = components['schemas']['Site'];
+// Existing sites.json files use cell_id; newer API payloads use cell_ids.
+type Site = components['schemas']['Site'] & { cell_id?: string[] };
 type QueryData = components['schemas']['QueryData'];
 type LineSummaryItem = components['schemas']['LineSummaryItem'];
 type SitesSummary = components['schemas']['SitesSummary'];
@@ -45,9 +46,10 @@ var sites: Site[] = updateSite();
 const cellIdDict: { [name: string]: string[] } = {};
 const siteNameDict: { [name: string]: string } = {};
 for (let site of sites) {
-  if (site.cell_id != undefined) {
-    cellIdDict[site.name] = site.cell_id;
-    for (let cellId of site.cell_id) {
+  const cellIds = site.cell_ids ?? site.cell_id;
+  if (cellIds != undefined) {
+    cellIdDict[site.name] = cellIds;
+    for (let cellId of cellIds) {
       siteNameDict[cellId] = site.name;
     }
   }

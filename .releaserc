@@ -9,6 +9,10 @@
                 "preset": "angular",
                 "releaseRules": [
                     {
+                        "breaking": true,
+                        "release": "major"
+                    },
+                    {
                         "type": "feat",
                         "release": "minor"
                     },
@@ -43,6 +47,9 @@
                     {
                         "type": "style",
                         "release": "patch"
+                    },
+                    {
+                        "release": "patch"
                     }
                 ]
             }
@@ -53,7 +60,6 @@
     ],
     "prepare": [
         "@semantic-release/changelog",
-        "./scripts/publish-version.js",
         "@semantic-release/git"
     ]
 }
