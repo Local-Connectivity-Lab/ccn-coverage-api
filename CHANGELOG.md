@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.1.0...v1.2.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* fix cicd ([#15](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/15)) ([7104974](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/7104974ea02747dc075313d3f85087cdce0195fa))
+* fix log ([#14](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/14)) ([a4dbd15](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/a4dbd1580a4bc38f6e9cf61be7c7c34330d60bfe))
+
+
+### Features
+
+* add step to workflow to publish docker image to docker registry ([#13](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/13)) ([3012faf](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/3012fafd180f831510cfefe28293ebc4098f9f3a))
+* create "identity" field for Site and update endpoints accordingly ([#12](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/issues/12)) ([852eb04](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/commit/852eb048785c4968fe17b6958a2121e6f86660ac))
+
 # [1.1.0](https://github.com/Local-Connectivity-Lab/ccn-coverage-api/compare/v1.0.1...v1.1.0) (2025-09-07)
 
 
