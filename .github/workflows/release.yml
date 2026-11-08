@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -29,6 +30,7 @@ jobs:
         run: npm run test
 
       - name: Run semantic-release
+        id: release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIT_AUTHOR_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
@@ -38,16 +40,10 @@ jobs:
           REPO_OWNER: "Local-Connectivity-Lab"
           REPO_NAME: "ccn-coverage-docker"
           TARGET_ARTIFACT_NAME: "ccn-coverage-api"
-        run: npx semantic-release
-
-      - name: Get version
-        id: get_version
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "Released version: $VERSION"
+        run: node scripts/release.mjs
 
       - name: Login to Docker Registry
+        if: steps.release.outputs.released == 'true'
         uses: docker/login-action@v3
         with:
           registry: icr.infra.seattlecommunitynetwork.org
@@ -55,5 +51,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and publish Docker image
-        run: |
-          make publish VERSION=${{ steps.get_version.outputs.VERSION }}
+        if: steps.release.outputs.released == 'true'
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: make publish VERSION="$VERSION"
