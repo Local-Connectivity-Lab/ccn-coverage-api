@@ -35,10 +35,10 @@ build-%: validate-semver-%
 publish: validate-semver-$(VERSION)
 	@echo "Building and publishing $(API_DOCKER_IMAGE_NAME):$(VERSION)"
 	docker build -t $(API_DOCKER_IMAGE_NAME):$(VERSION) .
-	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
-	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
-	docker push icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
-	docker push icr.infra.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
+	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
+	docker tag $(API_DOCKER_IMAGE_NAME):$(VERSION) icr.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
+	docker push icr.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):$(VERSION)
+	docker push icr.seattlecommunitynetwork.org/$(API_DOCKER_IMAGE_NAME):latest
 	@echo "Successfully published $(API_DOCKER_IMAGE_NAME):$(VERSION) to registry"
 
 # The target for development
