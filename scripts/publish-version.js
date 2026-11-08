@@ -6,14 +6,25 @@ import { Octokit } from '@octokit/rest';
 
 
 function updateNestedField(obj, targetArtifactName, value) {
-    const artifacts = obj.artifacts || [];
-    for (var artifact of artifacts) {
-        if (artifact.name === targetArtifactName && artifact.version < value) {
+    const artifact = (obj.artifacts || []).find(item => item.name === targetArtifactName);
+    if (!artifact) {
+        throw new Error(`Artifact ${targetArtifactName} is missing from the deployment manifest`);
+    }
+    const current = String(artifact.version).split('.').map(Number);
+    const next = value.split('.').map(Number);
+    if (current.length !== 3 || current.some(Number.isNaN)) {
+        throw new Error(`Invalid manifest version for ${targetArtifactName}`);
+    }
+    for (let i = 0; i < 3; i++) {
+        if (next[i] < current[i]) return false;
+        if (next[i] > current[i]) {
             artifact.version = value;
-            return;
+            return true;
         }
     }
+    return false;
 }
+
 
 export default async (pluginConfig, context) => {
     const { nextRelease, logger, env } = context;
@@ -66,7 +77,10 @@ export default async (pluginConfig, context) => {
         }
         const manifestContent = fs.readFileSync(fullManifestPath, 'utf8');
         const manifestData = yaml.load(manifestContent);
-        updateNestedField(manifestData, targetArtifactName, newVersion);
+        if (!updateNestedField(manifestData, targetArtifactName, newVersion)) {
+            logger.log(`Manifest already has ${targetArtifactName} at ${newVersion} or newer.`);
+            return;
+        }
 
         logger.log(`Updated '${targetArtifactName}' to '${newVersion}' in manifest data.`);
 

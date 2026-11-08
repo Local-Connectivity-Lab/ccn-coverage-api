@@ -28,3 +28,20 @@ Any contribution and pull requests are welcome! However, before you plan to impl
 
 ## License
 ccn-coverage-api is released under Apache License. See [LICENSE](/LICENSE) for more details.
+
+## CI/CD releases
+
+Pushes and merges to `main` run the release workflow. The pipeline checks the
+application, creates a semantic-release version, builds the Docker image, and
+pushes both `<version>` and `latest` to
+`icr.infra.seattlecommunitynetwork.org`. It updates the deployment repository's
+manifest only after both image pushes succeed.
+
+New commits receive at least a patch release; `feat:` selects a minor release and
+`BREAKING CHANGE:` selects a major release. Runs on `main` are serialized so two
+releases cannot publish concurrently. Manual runs are also supported on `main`.
+A rerun with no unreleased changes skips release/image publication.
+
+Required repository settings are `GH_TOKEN` (release and deployment-repository
+access), `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, and the existing
+`SCN_GIT_NAME` / `SCN_GIT_EMAIL` variables.
