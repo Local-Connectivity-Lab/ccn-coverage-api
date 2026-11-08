@@ -1,8 +1,7 @@
-import path from 'path';
-import pino, { multistream } from 'pino';
+import pino from 'pino';
 
 function createLogger() {
-  const logLevel = process.env.LOG_LEVEL || 'debug';
+  const logLevel = process.env.LOG_LEVEL || 'info';
 
   // Configure the logger
   const loggerOptions: pino.LoggerOptions = {
@@ -24,12 +23,8 @@ function createLogger() {
     },
   };
 
-  const logStreams = pino.multistream([
-    { level: 'debug', stream: process.stdout },
-    { level: 'warn', stream: process.stderr },
-  ]);
-
-  const logger = pino(loggerOptions, logStreams);
+  // Docker collects stdout. A single stream avoids duplicating warnings/errors.
+  const logger = pino(loggerOptions, process.stdout);
 
   // Make sure logs are flushed on exit
   process.on('exit', () => {
